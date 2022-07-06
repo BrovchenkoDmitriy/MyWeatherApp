@@ -4,7 +4,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.testretrofitapp.databinding.WeekWeatherItemBinding
 
 class WeatherViewHolder (binding: WeekWeatherItemBinding):RecyclerView.ViewHolder(binding.root){
-
     val tvDataTime = binding.tvDataTime
     val tvItemDescription = binding.tvItemDescription
     val ivItemWeatherIcon = binding.ivItemWeatherIcon

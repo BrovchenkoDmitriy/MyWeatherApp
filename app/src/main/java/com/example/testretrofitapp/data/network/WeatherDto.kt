@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.network
+package com.example.testretrofitapp.data.network
 
 import com.squareup.moshi.Json
 
@@ -9,7 +9,7 @@ data class WeatherDto(
     val timezone: String,
     @Json(name = "timezone_offset") val timezoneOffset: String,
     @Json(name = "current") val currentDto: CurrentWeatherDto,
-   // @Json(name = "hourly") val hourlyDto: List<HourlyWeatherDto>,
+    @Json(name = "hourly") val hourlyDto: List<HourlyWeatherDto>,
     @Json(name = "daily") val dailyDto: List<DailyWeatherDto>
 )
 
