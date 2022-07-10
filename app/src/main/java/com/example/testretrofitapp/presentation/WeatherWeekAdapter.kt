@@ -40,15 +40,16 @@ class WeatherWeekAdapter : RecyclerView.Adapter<WeatherViewHolder>() {
     }
 
     override fun onBindViewHolder(viewHolder: WeatherViewHolder, position: Int) {
-        val dailyWeather = //getItemId(position)
-            weatherList[position]
-        viewHolder.tvDataTime.text = dailyWeather.dt
-        viewHolder.tvItemDescription.text = dailyWeather.weather.description
-        viewHolder.tvItemDayTemp.text = dailyWeather.temp.day
-        viewHolder.tvItemNightTemp.text = dailyWeather.temp.night
+        val dailyWeather = weatherList[position]
         val icon = dailyWeather.weather.icon
         val imageIcon = "http://openweathermap.org/img/wn/$icon@2x.png"
-        bindImage(viewHolder.ivItemWeatherIcon, imageIcon)
+        with(viewHolder.binding){
+            tvDataTime.text = dailyWeather.dt
+            tvItemDescription.text = dailyWeather.weather.description
+            tvItemDayTemp.text = dailyWeather.temp.day
+            tvItemNightTemp.text = dailyWeather.temp.night
+            bindImage(ivItemWeatherIcon,imageIcon)
+        }
     }
 
     override fun getItemCount(): Int {
