@@ -52,7 +52,10 @@ class WeatherListMapper {
 
     private fun mapDailyDtoToDailyEntity(dailyWeatherDto: DailyWeatherDto): DailyWeatherEntity {
         return DailyWeatherEntity(
-            dt = formatForDailyWeather.format(dailyWeatherDto.dt.toLong() * 1000).capitalize(),
+            dt = formatForDailyWeather.format(dailyWeatherDto.dt.toLong() * 1000)
+                .replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                },
             temp = mapTempDtoToTempEntity(dailyWeatherDto.temp),
             feelsLike = mapTempDtoToTempEntity(dailyWeatherDto.feelsLike),
             pressure = dailyWeatherDto.pressure,
@@ -71,7 +74,11 @@ class WeatherListMapper {
         return WeatherTitleEntity(
             id = weatherTitleDto[0].id,
             main = weatherTitleDto[0].main,
-            description = weatherTitleDto[0].description.capitalize(),
+            description = weatherTitleDto[0].description.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.getDefault()
+                ) else it.toString()
+            },
             icon = weatherTitleDto[0].icon
         )
     }

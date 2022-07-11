@@ -58,7 +58,6 @@ class OverviewFragment : Fragment() {
         }
     }
 
-
     private val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
 
     private fun initData() {
@@ -68,18 +67,15 @@ class OverviewFragment : Fragment() {
         Log.d("TAG", "startInitData")
         viewModel.weatherDto.observe(viewLifecycleOwner) {
             it?.let {
-                val icon = it.currentEntity.weather.icon
-                val imageIcon = "http://openweathermap.org/img/wn/$icon@2x.png"
-                bindImage(binding.imWeatherIcon, imageIcon)
 
                 val currentTime = System.currentTimeMillis()
                 val currentTimeString = format.format(currentTime).toString() + it.currentEntity.dt
-                val currentTemp = it.currentEntity.temp
                 val feelLikeTemp = "Ощущается как " + it.currentEntity.feelsLike
 
                 with(binding) {
+                    bindImage(ivWeatherIcon, it.currentEntity.weather.icon)
                     tvDescription.text = it.currentEntity.weather.description
-                    tvCurrentTemp.text = currentTemp
+                    tvCurrentTemp.text = it.currentEntity.temp
                     tvCurrentTime.text = currentTimeString
                     tvFeelsLikeTemp.text = feelLikeTemp
                     weatherAdapter.weatherList = it.dailyEntity
@@ -88,8 +84,9 @@ class OverviewFragment : Fragment() {
         }
     }
 
-    private fun bindImage(imgView: ImageView, imgUrl: String?) {
-        imgUrl?.let {
+    private fun bindImage(imgView: ImageView, icon: String) {
+        val imgUrl = "http://openweathermap.org/img/wn/$icon@2x.png"
+        imgUrl.let {
             val imgUri = imgUrl.toUri().buildUpon().scheme("https").build()
             imgView.load(imgUri) {
                 placeholder(R.drawable.ic_launcher_background)
