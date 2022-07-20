@@ -1,16 +1,21 @@
-package com.example.testretrofitapp.domain
+package com.example.testretrofitapp.data.database
 
-data class WeatherEntity(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+//@Entity(tableName = "weather_forecast")
+data class  WeatherDBModel (
+
     val lat: String,
     val lon: String,
     val timezone: String,
     val timezoneOffset: String,
-    val currentEntity: CurrentWeatherEntity,
-    val hourlyEntity: List<HourlyWeatherEntity>,
-    val dailyEntity: List<DailyWeatherEntity>
+    val currentDao: CurrentWeatherDao,
+    val hourlyDao: List<HourlyWeatherDao>,
+    val dailyDao: List<DailyWeatherDao>
 )
 
-data class CurrentWeatherEntity(
+data class CurrentWeatherDao(
     val dt: String,
     val temp: String,
     val feelsLike: String,
@@ -19,23 +24,23 @@ data class CurrentWeatherEntity(
     val windSpeed: String,
     val windGust: String?,
     val windDeg: String,
-    val weather: WeatherTitleEntity
+    val weather: WeatherTitleDao
 )
 
-data class DailyWeatherEntity(
+data class DailyWeatherDao(
     val dt: String,
-    val temp: DailyTempEntity,
-    val feelsLike: DailyTempEntity,
+    val temp: DailyTempDao,
+    val feelsLike: DailyTempDao,
     val pressure: String,
     val humidity: String,
     val windSpeed: String,
     val windGust: String,
     val windDeg: String,
-    val weather: WeatherTitleEntity,
+    val weather: WeatherTitleDao,
     val pop: String
 )
 
-data class HourlyWeatherEntity(
+data class HourlyWeatherDao(
     val dt: String,
     val temp: String,
     val feelsLike: String,
@@ -44,16 +49,16 @@ data class HourlyWeatherEntity(
     val windSpeed: String,
     val windGust: String,
     val windDeg: String,
-    val weather: WeatherTitleEntity,
+    val weather: WeatherTitleDao,
     val pop: String
 )
 
-data class DailyTempEntity(
+data class DailyTempDao(
     val day: String,
     val night: String
 )
 
-data class WeatherTitleEntity(
+data class WeatherTitleDao(
     val id: String,
     val main: String,
     val description: String,

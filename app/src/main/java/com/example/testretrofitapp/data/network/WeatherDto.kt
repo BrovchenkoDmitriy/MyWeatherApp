@@ -19,6 +19,9 @@ data class CurrentWeatherDto(
     @Json(name = "feels_like") val feelsLike: String,
     val pressure: String,
     val humidity: String,
+    @Json(name = "wind_speed") val windSpeed: String,
+    @Json(name = "wind_gust") val windGust: String?,
+    @Json(name = "wind_deg") val windDeg: String,
     val weather: List<WeatherTitleDto>
 )
 
@@ -29,8 +32,8 @@ data class DailyWeatherDto(
     val pressure: String,
     val humidity: String,
     @Json(name = "wind_speed") val windSpeed: String,
+    @Json(name = "wind_gust") val windGust: String,
     @Json(name = "wind_deg") val windDeg: String,
-    @Json(name = "wind_gust") val WindGust: String,
     val weather: List<WeatherTitleDto>,
     val pop: String
 )
@@ -42,8 +45,8 @@ data class HourlyWeatherDto(
     val pressure: String,
     val humidity: String,
     @Json(name = "wind_speed") val windSpeed: String,
+    @Json(name = "wind_gust") val windGust: String,
     @Json(name = "wind_deg") val windDeg: String,
-    @Json(name = "wind_gust") val WindGust: String,
     val weather: List<WeatherTitleDto>,
     val pop: String
 )
