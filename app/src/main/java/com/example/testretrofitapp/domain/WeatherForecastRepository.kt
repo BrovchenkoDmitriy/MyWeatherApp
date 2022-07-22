@@ -1,6 +1,7 @@
 package com.example.testretrofitapp.domain
 
 interface WeatherForecastRepository {
-    fun getWeatherEntity(): WeatherEntity
+    fun getCurrentWeather(): CurrentWeatherEntity
+    fun getWeekWeather():List<DailyWeatherEntity>
     suspend fun loadData()
 }

@@ -1,31 +1,43 @@
 package com.example.testretrofitapp.data
 
 import android.app.Application
-import androidx.lifecycle.Transformations
-//import com.example.testretrofitapp.data.database.AppDataBase
-import com.example.testretrofitapp.data.database.WeatherForecastDao
+import com.example.testretrofitapp.data.database.AppDataBase
 import com.example.testretrofitapp.data.network.WeatherApi
-import com.example.testretrofitapp.data.network.WeatherDto
-import com.example.testretrofitapp.domain.WeatherEntity
+import com.example.testretrofitapp.domain.CurrentWeatherEntity
+import com.example.testretrofitapp.domain.DailyWeatherEntity
 import com.example.testretrofitapp.domain.WeatherForecastRepository
 
-class WeatherForecastRepositoryImpl(application: Application):WeatherForecastRepository
-{
-    //private val weatherForecastDao = AppDataBase.getInstance(application).weatherForecastDao()
+class WeatherForecastRepositoryImpl(application: Application) : WeatherForecastRepository {
+    private val db = AppDataBase.getInstance(application)
+    private val currentWeatherDao = db.currentWeatherDao()
+    private val dailyWeatherDao = db.dailyWeatherDao()
     private val mapper = WeatherListMapper()
     private val apiService = WeatherApi.retrofitService
-    private lateinit var weatherDto: WeatherDto
-    //private val weatherJson = WeatherApi.retrofitService.getWeather()
 
-     override fun getWeatherEntity(): WeatherEntity {
-         //val a = mapper.mapDtoToEntity(weatherDto)
+    override fun getCurrentWeather(): CurrentWeatherEntity {
+        val currentWeatherDbModel = currentWeatherDao.getWeatherDbModel()
+        return mapper.mapCurrentDbModelToCurrentEntity(currentWeatherDbModel)
+    }
 
-        return mapper.mapDbModelToEntity(mapper.mapDtoToDbModel(weatherDto))
-         //mapper.mapDtoToEntity(weatherDto)
-
+    override fun getWeekWeather(): List<DailyWeatherEntity> {
+        val listOfDailyWeatherDbModel = dailyWeatherDao.getWeatherWeek()
+        return mapper.mapDailyDbModelListToDailyEntityList(listOfDailyWeatherDbModel)
     }
 
     override suspend fun loadData() {
-       weatherDto = apiService.getWeather()
+        try {
+            val weatherDto = apiService.getWeather()
+            val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto.currentDto)
+            val weekWeather = mapper.mapDailyDtoListToDailyDaoList(weatherDto.dailyDto)
+
+            currentWeatherDao.clearCurrentWeather()
+            currentWeatherDao.insertCurrentWeather(currentWeather)
+
+            dailyWeatherDao.clearWeekWeather()
+            dailyWeatherDao.insertWeatherWeek(weekWeather)
+
+        } catch (e: Exception) {
+
+        }
     }
 }

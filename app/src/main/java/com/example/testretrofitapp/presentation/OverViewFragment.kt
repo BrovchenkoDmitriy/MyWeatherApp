@@ -46,7 +46,6 @@ class OverviewFragment : Fragment() {
         _binding = null
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("TAG", "onViewCreated")
@@ -58,29 +57,28 @@ class OverviewFragment : Fragment() {
         }
     }
 
-    private val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
-
     private fun initData() {
 //        viewModel.status.observe(viewLifecycleOwner) {
 //            println(it)
 //        }
         Log.d("TAG", "startInitData")
-        viewModel.weatherDto.observe(viewLifecycleOwner) {
+        viewModel.currentWeatherDto.observe(viewLifecycleOwner) {
             it?.let {
-
+                val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
                 val currentTime = System.currentTimeMillis()
-                val currentTimeString = format.format(currentTime).toString() + it.currentEntity.dt
-                val feelLikeTemp = "Ощущается как " + it.currentEntity.feelsLike
-
+                val currentTimeString = format.format(currentTime).toString() + it.dt
+                val feelLikeTemp = "Ощущается как " + it.feelsLike
                 with(binding) {
-                    bindImage(ivWeatherIcon, it.currentEntity.weather.icon)
-                    tvDescription.text = it.currentEntity.weather.description
-                    tvCurrentTemp.text = it.currentEntity.temp
+                    bindImage(ivWeatherIcon, it.icon)
+                    tvDescription.text = it.description
+                    tvCurrentTemp.text = it.temp
                     tvCurrentTime.text = currentTimeString
                     tvFeelsLikeTemp.text = feelLikeTemp
-                    weatherAdapter.weatherList = it.dailyEntity
                 }
             }
+        }
+        viewModel.weekWeatherDto.observe(viewLifecycleOwner) {
+            weatherAdapter.weatherList = it
         }
     }
 

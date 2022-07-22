@@ -1,16 +1,7 @@
 package com.example.testretrofitapp.domain
 
-data class WeatherEntity(
-    val lat: String,
-    val lon: String,
-    val timezone: String,
-    val timezoneOffset: String,
-    val currentEntity: CurrentWeatherEntity,
-    val hourlyEntity: List<HourlyWeatherEntity>,
-    val dailyEntity: List<DailyWeatherEntity>
-)
-
 data class CurrentWeatherEntity(
+    val id:Int = 0,
     val dt: String,
     val temp: String,
     val feelsLike: String,
@@ -19,19 +10,24 @@ data class CurrentWeatherEntity(
     val windSpeed: String,
     val windGust: String?,
     val windDeg: String,
-    val weather: WeatherTitleEntity
+    val description: String,
+    val icon: String
 )
 
 data class DailyWeatherEntity(
+    val id:Int = 0,
     val dt: String,
-    val temp: DailyTempEntity,
-    val feelsLike: DailyTempEntity,
+    val tempDay: String,
+    val tempNight: String,
+    val feelsLikeDay: String,
+    val feelsLikeNight: String,
     val pressure: String,
     val humidity: String,
     val windSpeed: String,
     val windGust: String,
     val windDeg: String,
-    val weather: WeatherTitleEntity,
+    val description: String,
+    val icon: String,
     val pop: String
 )
 
@@ -44,18 +40,7 @@ data class HourlyWeatherEntity(
     val windSpeed: String,
     val windGust: String,
     val windDeg: String,
-    val weather: WeatherTitleEntity,
-    val pop: String
-)
-
-data class DailyTempEntity(
-    val day: String,
-    val night: String
-)
-
-data class WeatherTitleEntity(
-    val id: String,
-    val main: String,
     val description: String,
-    val icon: String
+    val icon: String,
+    val pop: String
 )

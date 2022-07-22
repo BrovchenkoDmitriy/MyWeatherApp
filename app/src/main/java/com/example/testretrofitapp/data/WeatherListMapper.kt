@@ -1,9 +1,15 @@
 package com.example.testretrofitapp.data
 
 import android.icu.text.SimpleDateFormat
-import com.example.testretrofitapp.data.database.*
-import com.example.testretrofitapp.data.network.*
-import com.example.testretrofitapp.domain.*
+import com.example.testretrofitapp.data.database.CurrentWeatherDbModel
+import com.example.testretrofitapp.data.database.DailyWeatherDbModel
+import com.example.testretrofitapp.data.database.HourlyWeatherDbModel
+import com.example.testretrofitapp.data.network.CurrentWeatherDto
+import com.example.testretrofitapp.data.network.DailyWeatherDto
+import com.example.testretrofitapp.data.network.HourlyWeatherDto
+import com.example.testretrofitapp.domain.CurrentWeatherEntity
+import com.example.testretrofitapp.domain.DailyWeatherEntity
+import com.example.testretrofitapp.domain.HourlyWeatherEntity
 import java.util.*
 
 
@@ -13,192 +19,141 @@ class WeatherListMapper {
     private val formatForCurrentWeather = SimpleDateFormat("(HH:mm)", language)
     private val formatForDailyWeather = SimpleDateFormat("EEEE, dd MMMM", language)
 
-////////////////////////////////////  DtoToDbModel  ////////////////////////////////////////////////
-
-    fun mapDtoToDbModel(weatherDto: WeatherDto): WeatherDBModel {
-        return WeatherDBModel(
-            lat = weatherDto.lat,
-            lon = weatherDto.lon,
-            timezone = weatherDto.timezone,
-            timezoneOffset = weatherDto.timezoneOffset,
-            currentDao = mapCurrentDtoToCurrentDao(weatherDto.currentDto),
-            hourlyDao = mapHourlyDtoListToHourlyDaoList(weatherDto.hourlyDto),
-            dailyDao = mapDailyDtoListToDailyDaoList(weatherDto.dailyDto)
-        )
+    private fun String.myCapitalize():String {
+        if (this.isNotEmpty()){
+            if (this[0].isLowerCase()) this[0].titlecase(
+                Locale.getDefault()
+            ) else this[0].toString()
+        }
+       return this
     }
 
-    private fun mapCurrentDtoToCurrentDao(currentWeatherDto: CurrentWeatherDto): CurrentWeatherDao {
-        return CurrentWeatherDao(
+////////////////////////////////////  DtoToDbModel  ////////////////////////////////////////////////
+
+    fun mapCurrentDtoToCurrentDbModel(currentWeatherDto: CurrentWeatherDto): CurrentWeatherDbModel {
+        return CurrentWeatherDbModel(
+            id = 0,
             dt = formatForCurrentWeather.format(currentWeatherDto.dt.toLong() * 1000),
             temp = currentWeatherDto.temp.substring(0, 2) + "\u00B0C",
             feelsLike = currentWeatherDto.feelsLike.substring(0, 2) + "\u00B0C",
             pressure = currentWeatherDto.pressure,
             humidity = currentWeatherDto.humidity,
-            windSpeed =currentWeatherDto.windSpeed,
-            windGust =currentWeatherDto.windGust,
-            windDeg =currentWeatherDto.windDeg,
-            weather = mapWeatherTitleDtoToWeatherTitleDao(currentWeatherDto.weather)
+            windSpeed = currentWeatherDto.windSpeed,
+            windGust = currentWeatherDto.windGust,
+            windDeg = currentWeatherDto.windDeg,
+            description = currentWeatherDto.weather[0].description.myCapitalize(),
+            icon = currentWeatherDto.weather[0].icon
         )
     }
 
-    private fun mapHourlyDtoToHourlyDao(hourlyWeatherDto: HourlyWeatherDto): HourlyWeatherDao {
-        return HourlyWeatherDao(
+    private fun mapHourlyDtoToHourlyDbModel(hourlyWeatherDto: HourlyWeatherDto): HourlyWeatherDbModel {
+        return HourlyWeatherDbModel(
             dt = hourlyWeatherDto.dt,
-            temp = hourlyWeatherDto.temp,
-            feelsLike = hourlyWeatherDto.feelsLike,
+            temp = hourlyWeatherDto.temp.substring(0, 2) + "\u00B0",
+            feelsLike = hourlyWeatherDto.feelsLike.substring(0, 2) + "\u00B0",
             pressure = hourlyWeatherDto.pressure,
             humidity = hourlyWeatherDto.humidity,
             windSpeed = hourlyWeatherDto.windSpeed,
             windGust = hourlyWeatherDto.windGust,
             windDeg = hourlyWeatherDto.windDeg,
-            weather = mapWeatherTitleDtoToWeatherTitleDao(hourlyWeatherDto.weather),
+            description = hourlyWeatherDto.weather[0].description.capitalize(),
+            icon = hourlyWeatherDto.weather[0].icon,
             pop = hourlyWeatherDto.pop
         )
     }
 
-    private fun mapDailyDtoToDailyDao(dailyWeatherDto: DailyWeatherDto): DailyWeatherDao {
-        return DailyWeatherDao(
+    private fun mapDailyDtoToDailyDbModel(dailyWeatherDto: DailyWeatherDto): DailyWeatherDbModel {
+        return DailyWeatherDbModel(
+            id = 0,
             dt = formatForDailyWeather.format(dailyWeatherDto.dt.toLong() * 1000)
                 .replaceFirstChar {
                     if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
                 },
-            temp = mapTempDtoToTempDao(dailyWeatherDto.temp),
-            feelsLike = mapTempDtoToTempDao(dailyWeatherDto.feelsLike),
+            tempDay = dailyWeatherDto.temp.day.substring(0, 2) + "\u00B0",
+            tempNight = dailyWeatherDto.temp.night.substring(0, 2) + "\u00B0",
+            feelsLikeDay = dailyWeatherDto.feelsLike.day.substring(0, 2) + "\u00B0",
+            feelsLikeNight = dailyWeatherDto.feelsLike.night.substring(0, 2) + "\u00B0",
             pressure = dailyWeatherDto.pressure,
             humidity = dailyWeatherDto.humidity,
             windSpeed = dailyWeatherDto.windSpeed,
             windGust = dailyWeatherDto.windGust,
             windDeg = dailyWeatherDto.windDeg,
-            weather = mapWeatherTitleDtoToWeatherTitleDao(dailyWeatherDto.weather),
+            description = dailyWeatherDto.weather[0].description.capitalize(),
+            icon = dailyWeatherDto.weather[0].icon,
             pop = dailyWeatherDto.pop
         )
     }
 
-    private fun mapWeatherTitleDtoToWeatherTitleDao(
-        weatherTitleDto: List<WeatherTitleDto>
-    ): WeatherTitleDao {
-        return WeatherTitleDao(
-            id = weatherTitleDto[0].id,
-            main = weatherTitleDto[0].main,
-            description = weatherTitleDto[0].description.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    Locale.getDefault()
-                ) else it.toString()
-            },
-            icon = weatherTitleDto[0].icon
-        )
-    }
-
-    private fun mapTempDtoToTempDao(dailyTempDto: DailyTempDto): DailyTempDao {
-        return DailyTempDao(
-            day = dailyTempDto.day.substring(0, 2) + "\u00B0",
-            night = dailyTempDto.night.substring(0, 2) + "\u00B0"
-        )
-    }
-
-    private fun mapDailyDtoListToDailyDaoList(list: List<DailyWeatherDto>) =
+    fun mapDailyDtoListToDailyDaoList(list: List<DailyWeatherDto>) =
         list.map {
-            mapDailyDtoToDailyDao(it)
+            mapDailyDtoToDailyDbModel(it)
         }
 
-    private fun mapHourlyDtoListToHourlyDaoList(list: List<HourlyWeatherDto>) =
+    private fun mapHourlyDtoListToHourlyDbModelList(list: List<HourlyWeatherDto>) =
         list.map {
-            mapHourlyDtoToHourlyDao(it)
+            mapHourlyDtoToHourlyDbModel(it)
         }
-
 
 ////////////////////////////////////  DbModelToEntity  /////////////////////////////////////////////
 
-
-    fun mapDbModelToEntity(weatherDao: WeatherDBModel): WeatherEntity {
-        return WeatherEntity(
-            lat = weatherDao.lat,
-            lon = weatherDao.lon,
-            timezone = weatherDao.timezone,
-            timezoneOffset = weatherDao.timezoneOffset,
-            currentEntity = mapCurrentDaoToCurrentEntity(weatherDao.currentDao),
-            hourlyEntity = mapHourlyDaoListToHourlyEntityList(weatherDao.hourlyDao),
-            dailyEntity = mapDailyDaoListToDailyEntityList(weatherDao.dailyDao)
-        )
-    }
-
-    private fun mapCurrentDaoToCurrentEntity(currentWeatherDao: CurrentWeatherDao): CurrentWeatherEntity {
+    fun mapCurrentDbModelToCurrentEntity(currentWeatherDbModel: CurrentWeatherDbModel): CurrentWeatherEntity {
         return CurrentWeatherEntity(
-            dt = currentWeatherDao.dt, //formatForCurrentWeather.format(currentWeatherDao.dt.toLong() * 1000),
-            temp = currentWeatherDao.temp,//.substring(0, 2) + "\u00B0C",
-            feelsLike = currentWeatherDao.feelsLike,//.substring(0, 2) + "\u00B0C",
-            pressure = currentWeatherDao.pressure,
-            humidity = currentWeatherDao.humidity,
-            windSpeed = currentWeatherDao.windSpeed,
-            windGust = currentWeatherDao.windGust,
-            windDeg = currentWeatherDao.windDeg,
-            weather = mapWeatherTitleDaoToWeatherTitleEntity(currentWeatherDao.weather)
+            id = currentWeatherDbModel.id,
+            dt = currentWeatherDbModel.dt,
+            temp = currentWeatherDbModel.temp,
+            feelsLike = currentWeatherDbModel.feelsLike,
+            pressure = currentWeatherDbModel.pressure,
+            humidity = currentWeatherDbModel.humidity,
+            windSpeed = currentWeatherDbModel.windSpeed,
+            windGust = currentWeatherDbModel.windGust,
+            windDeg = currentWeatherDbModel.windDeg,
+            description = currentWeatherDbModel.description,
+            icon = currentWeatherDbModel.icon
         )
     }
 
-    private fun mapHourlyDaoToHourlyEntity(hourlyWeatherDao: HourlyWeatherDao): HourlyWeatherEntity {
+    private fun mapHourlyDbModelToHourlyEntity(hourlyWeatherDbModel: HourlyWeatherDbModel): HourlyWeatherEntity {
         return HourlyWeatherEntity(
-            dt = hourlyWeatherDao.dt,
-            temp = hourlyWeatherDao.temp,
-            feelsLike = hourlyWeatherDao.feelsLike,
-            pressure = hourlyWeatherDao.pressure,
-            humidity = hourlyWeatherDao.humidity,
-            windSpeed = hourlyWeatherDao.windSpeed,
-            windGust = hourlyWeatherDao.windGust,
-            windDeg = hourlyWeatherDao.windDeg,
-            weather = mapWeatherTitleDaoToWeatherTitleEntity(hourlyWeatherDao.weather),
-            pop = hourlyWeatherDao.pop
+            dt = hourlyWeatherDbModel.dt,
+            temp = hourlyWeatherDbModel.temp,
+            feelsLike = hourlyWeatherDbModel.feelsLike,
+            pressure = hourlyWeatherDbModel.pressure,
+            humidity = hourlyWeatherDbModel.humidity,
+            windSpeed = hourlyWeatherDbModel.windSpeed,
+            windGust = hourlyWeatherDbModel.windGust,
+            windDeg = hourlyWeatherDbModel.windDeg,
+            description = hourlyWeatherDbModel.description,
+            icon = hourlyWeatherDbModel.icon,
+            pop = hourlyWeatherDbModel.pop
         )
     }
 
-    private fun mapDailyDaoToDailyEntity(dailyWeatherDao: DailyWeatherDao): DailyWeatherEntity {
+    private fun mapDailyDbModelToDailyEntity(dailyWeatherDbModel: DailyWeatherDbModel): DailyWeatherEntity {
         return DailyWeatherEntity(
-            dt = dailyWeatherDao.dt,
-//                formatForDailyWeather.format(dailyWeatherDao.dt.toLong() * 1000)
-//                .replaceFirstChar {
-//                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-//                },
-            temp = mapTempDaoToTempEntity(dailyWeatherDao.temp),
-            feelsLike = mapTempDaoToTempEntity(dailyWeatherDao.feelsLike),
-            pressure = dailyWeatherDao.pressure,
-            humidity = dailyWeatherDao.humidity,
-            windSpeed = dailyWeatherDao.windSpeed,
-            windGust = dailyWeatherDao.windGust,
-            windDeg = dailyWeatherDao.windDeg,
-            weather = mapWeatherTitleDaoToWeatherTitleEntity(dailyWeatherDao.weather),
-            pop = dailyWeatherDao.pop
+            id = dailyWeatherDbModel.id,
+            dt = dailyWeatherDbModel.dt,
+            tempDay = dailyWeatherDbModel.tempDay,
+            tempNight = dailyWeatherDbModel.tempNight,
+            feelsLikeDay = dailyWeatherDbModel.feelsLikeDay,
+            feelsLikeNight = dailyWeatherDbModel.feelsLikeNight,
+            pressure = dailyWeatherDbModel.pressure,
+            humidity = dailyWeatherDbModel.humidity,
+            windSpeed = dailyWeatherDbModel.windSpeed,
+            windGust = dailyWeatherDbModel.windGust,
+            windDeg = dailyWeatherDbModel.windDeg,
+            description = dailyWeatherDbModel.description,
+            icon = dailyWeatherDbModel.icon,
+            pop = dailyWeatherDbModel.pop
         )
     }
 
-    private fun mapWeatherTitleDaoToWeatherTitleEntity(
-        weatherTitleDao: WeatherTitleDao
-    ): WeatherTitleEntity {
-        return WeatherTitleEntity(
-            id = weatherTitleDao.id,//[0].id,
-            main = weatherTitleDao.main,//[0].main,
-            description = weatherTitleDao.description,//[0].description.replaceFirstChar {
-//                if (it.isLowerCase()) it.titlecase(
-//                    Locale.getDefault()
-//                ) else it.toString()
-//            },
-            icon = weatherTitleDao.icon//[0].icon
-        )
-    }
-
-    private fun mapTempDaoToTempEntity(dailyTempDao: DailyTempDao): DailyTempEntity {
-        return DailyTempEntity(
-            day = dailyTempDao.day,//.substring(0, 2) + "\u00B0",
-            night = dailyTempDao.night,//.substring(0, 2) + "\u00B0"
-        )
-    }
-
-    private fun mapDailyDaoListToDailyEntityList(list: List<DailyWeatherDao>) =
+    fun mapDailyDbModelListToDailyEntityList(list: List<DailyWeatherDbModel>) =
         list.map {
-            mapDailyDaoToDailyEntity(it)
+            mapDailyDbModelToDailyEntity(it)
         }
 
-    private fun mapHourlyDaoListToHourlyEntityList(list: List<HourlyWeatherDao>) =
+    private fun mapHourlyDaoListToHourlyEntityList(list: List<HourlyWeatherDbModel>) =
         list.map {
-            mapHourlyDaoToHourlyEntity(it)
+            mapHourlyDbModelToHourlyEntity(it)
         }
 }
