@@ -3,19 +3,11 @@ package com.example.testretrofitapp.data.database
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-//@Entity(tableName = "weather_forecast")
-data class  WeatherDBModel (
 
-    val lat: String,
-    val lon: String,
-    val timezone: String,
-    val timezoneOffset: String,
-    val currentDao: CurrentWeatherDao,
-    val hourlyDao: List<HourlyWeatherDao>,
-    val dailyDao: List<DailyWeatherDao>
-)
-
-data class CurrentWeatherDao(
+@Entity (tableName = "current_weather")
+data class CurrentWeatherDbModel(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
     val dt: String,
     val temp: String,
     val feelsLike: String,
@@ -24,23 +16,30 @@ data class CurrentWeatherDao(
     val windSpeed: String,
     val windGust: String?,
     val windDeg: String,
-    val weather: WeatherTitleDao
+    val description: String,
+    val icon: String
 )
 
-data class DailyWeatherDao(
+@Entity(tableName = "daily_weather")
+data class DailyWeatherDbModel(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
     val dt: String,
-    val temp: DailyTempDao,
-    val feelsLike: DailyTempDao,
+    val tempDay: String,
+    val tempNight: String,
+    val feelsLikeDay: String,
+    val feelsLikeNight: String,
     val pressure: String,
     val humidity: String,
     val windSpeed: String,
     val windGust: String,
     val windDeg: String,
-    val weather: WeatherTitleDao,
+    val description: String,
+    val icon: String,
     val pop: String
 )
 
-data class HourlyWeatherDao(
+data class HourlyWeatherDbModel(
     val dt: String,
     val temp: String,
     val feelsLike: String,
@@ -49,18 +48,7 @@ data class HourlyWeatherDao(
     val windSpeed: String,
     val windGust: String,
     val windDeg: String,
-    val weather: WeatherTitleDao,
-    val pop: String
-)
-
-data class DailyTempDao(
-    val day: String,
-    val night: String
-)
-
-data class WeatherTitleDao(
-    val id: String,
-    val main: String,
     val description: String,
-    val icon: String
+    val icon: String,
+    val pop: String
 )
