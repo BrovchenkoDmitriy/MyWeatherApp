@@ -78,7 +78,8 @@ class OverviewFragment : Fragment() {
             }
         }
         viewModel.weekWeatherDto.observe(viewLifecycleOwner) {
-            weatherAdapter.weatherList = it
+            weatherAdapter.submitList(it)
+            //weatherList = it
         }
     }
 

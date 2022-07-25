@@ -19,13 +19,12 @@ class WeatherListMapper {
     private val formatForCurrentWeather = SimpleDateFormat("(HH:mm)", language)
     private val formatForDailyWeather = SimpleDateFormat("EEEE, dd MMMM", language)
 
-    private fun String.myCapitalize():String {
-        if (this.isNotEmpty()){
-            if (this[0].isLowerCase()) this[0].titlecase(
-                Locale.getDefault()
-            ) else this[0].toString()
-        }
-       return this
+    private fun String.myCapitalize(): String {
+        return if (this.isNotEmpty()) {
+            return if (this[0].isLowerCase()) {
+                this[0].titlecase(Locale.getDefault()) + this.substring(1)
+            } else this
+        } else this
     }
 
 ////////////////////////////////////  DtoToDbModel  ////////////////////////////////////////////////
@@ -56,7 +55,7 @@ class WeatherListMapper {
             windSpeed = hourlyWeatherDto.windSpeed,
             windGust = hourlyWeatherDto.windGust,
             windDeg = hourlyWeatherDto.windDeg,
-            description = hourlyWeatherDto.weather[0].description.capitalize(),
+            description = hourlyWeatherDto.weather[0].description.myCapitalize(),
             icon = hourlyWeatherDto.weather[0].icon,
             pop = hourlyWeatherDto.pop
         )
@@ -78,7 +77,7 @@ class WeatherListMapper {
             windSpeed = dailyWeatherDto.windSpeed,
             windGust = dailyWeatherDto.windGust,
             windDeg = dailyWeatherDto.windDeg,
-            description = dailyWeatherDto.weather[0].description.capitalize(),
+            description = dailyWeatherDto.weather[0].description.myCapitalize(),
             icon = dailyWeatherDto.weather[0].icon,
             pop = dailyWeatherDto.pop
         )

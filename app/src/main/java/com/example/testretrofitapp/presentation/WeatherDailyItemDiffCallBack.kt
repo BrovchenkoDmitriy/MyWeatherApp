@@ -1,14 +1,15 @@
-//package com.example.testretrofitapp.presentation
-//
-//import androidx.recyclerview.widget.DiffUtil
-//import com.example.testretrofitapp.domain.DailyWeatherItem
-//
-//class WeatherDailyItemDiffCallBack():DiffUtil.ItemCallback<DailyWeatherItem>() {
-//    override fun areItemsTheSame(oldWeatherItem: DailyWeatherItem, newWeatherItem: DailyWeatherItem): Boolean {
-//        return oldWeatherItem == newWeatherItem
-//    }
-//
-//    override fun areContentsTheSame(oldWeatherItem: DailyWeatherItem, newWeatherItem: DailyWeatherItem): Boolean {
-//        return oldWeatherItem == newWeatherItem
-//    }
-//}
+package com.example.testretrofitapp.presentation
+
+import androidx.recyclerview.widget.DiffUtil
+import com.example.testretrofitapp.domain.DailyWeatherEntity
+
+
+class WeatherDailyItemDiffCallBack():DiffUtil.ItemCallback<DailyWeatherEntity>() {
+    override fun areItemsTheSame(oldWeatherItem: DailyWeatherEntity, newWeatherItem: DailyWeatherEntity): Boolean {
+        return oldWeatherItem.id == newWeatherItem.id
+    }
+
+    override fun areContentsTheSame(oldWeatherItem: DailyWeatherEntity, newWeatherItem: DailyWeatherEntity): Boolean {
+        return oldWeatherItem == newWeatherItem
+    }
+}
