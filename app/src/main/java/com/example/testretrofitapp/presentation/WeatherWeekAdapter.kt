@@ -6,21 +6,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.testretrofitapp.R
 import com.example.testretrofitapp.databinding.WeekWeatherItemBinding
 import com.example.testretrofitapp.domain.DailyWeatherEntity
 
-class WeatherWeekAdapter : ListAdapter<DailyWeatherEntity, WeatherViewHolder>(WeatherDailyItemDiffCallBack())
-    //RecyclerView.Adapter<WeatherViewHolder>()
-{
-
-//    var weatherList = listOf<DailyWeatherEntity>()
-//    set(value) {
-//        field = value
-//        notifyDataSetChanged()
-//    }
+class WeatherWeekAdapter :
+    ListAdapter<DailyWeatherEntity, WeatherViewHolder>(WeatherDailyItemDiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
         Log.d("TAG", "onCreateViewHolder")
@@ -44,7 +36,6 @@ class WeatherWeekAdapter : ListAdapter<DailyWeatherEntity, WeatherViewHolder>(We
 
     override fun onBindViewHolder(viewHolder: WeatherViewHolder, position: Int) {
         val dailyWeather = getItem(position)
-            //weatherList[position]
         val icon = dailyWeather.icon
         val imageIcon = "http://openweathermap.org/img/wn/$icon@2x.png"
         with(viewHolder.binding){
@@ -55,9 +46,4 @@ class WeatherWeekAdapter : ListAdapter<DailyWeatherEntity, WeatherViewHolder>(We
             bindImage(ivItemWeatherIcon,imageIcon)
         }
     }
-//
-//    override fun getItemCount(): Int {
-//        return weatherList.size
-//    }
-
 }
