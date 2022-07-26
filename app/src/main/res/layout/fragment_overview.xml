@@ -1,103 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
-
-
-    <Button
-        android:id="@+id/load_weather_button"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_current_weather"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="@string/get_weather"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp"
+        android:layout_margin="8dp"
+        >
 
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/iv_weather_icon"
-        tools:text="Облачно с прояснениями" />
+        <Button
+            android:id="@+id/load_weather_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/get_weather"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv_weather_icon"
-        android:contentDescription="@string/weather_icon"
-        android:layout_width="120dp"
-        android:layout_height="110dp"
-        android:layout_marginTop="116dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
 
-    <TextView
-        android:id="@+id/tv_current_temp"
-        android:layout_width="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/iv_weather_icon"
+            tools:text="Облачно с прояснениями" />
+
+        <ImageView
+            android:id="@+id/iv_weather_icon"
+            android:layout_width="120dp"
+            android:layout_height="110dp"
+            android:layout_marginTop="116dp"
+            android:contentDescription="@string/weather_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <TextView
+            android:id="@+id/tv_current_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|start"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_description"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/iv_weather_icon"
+            tools:text="18\u00B0С" />
+
+        <TextView
+            android:id="@+id/tv_feels_like_temp"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_description"
+
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHorizontal_bias="0.56"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_description"
+            tools:text="Ощущается как 18\u00B0С" />
+
+        <TextView
+            android:id="@+id/tv_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_current_temp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="21 июня 11:33" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_hourly_weather"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center|start"
-        android:textSize="60sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tv_description"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_weather_icon"
-        tools:text="18\u00B0С" />
-
-    <TextView
-        android:id="@+id/tv_feels_like_temp"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_description"
-
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintHorizontal_bias="0.56"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_description"
-        tools:text="Ощущается как 18\u00B0С" />
-
-    <TextView
-        android:id="@+id/tv_current_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_current_temp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="21 июня 11:33" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5"
-         />
-
+        tools:listitem="@layout/hourly_weather_item"
+        android:visibility="gone"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_further_week"
-        android:layout_width="408dp"
-        android:layout_height="304dp"
-        android:layout_marginTop="292dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/load_weather_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         tools:listitem="@layout/week_weather_item" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

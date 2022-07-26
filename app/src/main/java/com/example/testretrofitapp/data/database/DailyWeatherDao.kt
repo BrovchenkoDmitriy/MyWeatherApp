@@ -12,7 +12,7 @@ interface DailyWeatherDao{
     fun getWeatherWeek():List<DailyWeatherDbModel>
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWeatherWeek(weatherWeek: List<DailyWeatherDbModel>)
+    suspend fun insertWeekWeather(weatherWeek: List<DailyWeatherDbModel>)
 
     @Query("DELETE FROM daily_weather")
     suspend fun clearWeekWeather()

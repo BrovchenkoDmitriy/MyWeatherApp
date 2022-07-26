@@ -6,11 +6,17 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 
-@Database(entities = [CurrentWeatherDbModel::class, DailyWeatherDbModel::class], version =2)
+@Database(
+    entities = [CurrentWeatherDbModel::class,
+                DailyWeatherDbModel::class,
+                HourlyWeatherDbModel::class],
+    version = 3
+)
 abstract class AppDataBase : RoomDatabase() {
 
     abstract fun currentWeatherDao(): CurrentWeatherDao
     abstract fun dailyWeatherDao(): DailyWeatherDao
+    abstract fun hourlyWeatherDao():HourlyWeatherDao
 
     companion object {
 

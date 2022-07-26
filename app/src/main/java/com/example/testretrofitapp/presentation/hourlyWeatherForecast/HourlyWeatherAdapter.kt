@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation
+package com.example.testretrofitapp.presentation.hourlyWeatherForecast
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,20 +8,20 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.ListAdapter
 import coil.load
 import com.example.testretrofitapp.R
-import com.example.testretrofitapp.databinding.WeekWeatherItemBinding
-import com.example.testretrofitapp.domain.DailyWeatherEntity
+import com.example.testretrofitapp.databinding.HourlyWeatherItemBinding
+import com.example.testretrofitapp.domain.HourlyWeatherEntity
 
-class WeatherWeekAdapter :
-    ListAdapter<DailyWeatherEntity, WeatherViewHolder>(WeatherDailyItemDiffCallBack()) {
+class HourlyWeatherAdapter :
+    ListAdapter<HourlyWeatherEntity, HourlyWeatherViewHolder>(HourlyWeatherItemDiffCallBack()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyWeatherViewHolder {
         Log.d("TAG", "onCreateViewHolder")
-        val binding = WeekWeatherItemBinding.inflate(
+        val binding = HourlyWeatherItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return WeatherViewHolder(binding)
+        return HourlyWeatherViewHolder(binding)
     }
 
     private fun bindImage(imgView: ImageView, imgUrl: String?) {
@@ -34,15 +34,13 @@ class WeatherWeekAdapter :
         }
     }
 
-    override fun onBindViewHolder(viewHolder: WeatherViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolderHourly: HourlyWeatherViewHolder, position: Int) {
         val dailyWeather = getItem(position)
         val icon = dailyWeather.icon
         val imageIcon = "http://openweathermap.org/img/wn/$icon@2x.png"
-        with(viewHolder.binding){
+        with(viewHolderHourly.binding){
             tvDataTime.text = dailyWeather.dt
-            tvItemDescription.text = dailyWeather.description
-            tvItemDayTemp.text = dailyWeather.tempDay
-            tvItemNightTemp.text = dailyWeather.tempNight
+            tvItemDayTemp.text = dailyWeather.temp
             bindImage(ivItemWeatherIcon,imageIcon)
         }
     }
