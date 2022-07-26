@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation
+package com.example.testretrofitapp.presentation.weekWeatherForecast
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testretrofitapp.databinding.WeekWeatherItemBinding

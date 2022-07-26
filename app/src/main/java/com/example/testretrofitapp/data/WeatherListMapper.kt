@@ -18,6 +18,7 @@ class WeatherListMapper {
     private val language = Locale.getDefault()
     private val formatForCurrentWeather = SimpleDateFormat("(HH:mm)", language)
     private val formatForDailyWeather = SimpleDateFormat("EEEE, dd MMMM", language)
+    private val formatForHourlyWeather = SimpleDateFormat("dd.MM HH:mm", language)
 
     private fun String.myCapitalize(): String {
         return if (this.isNotEmpty()) {
@@ -47,7 +48,8 @@ class WeatherListMapper {
 
     private fun mapHourlyDtoToHourlyDbModel(hourlyWeatherDto: HourlyWeatherDto): HourlyWeatherDbModel {
         return HourlyWeatherDbModel(
-            dt = hourlyWeatherDto.dt,
+            id = 0,
+            dt = formatForHourlyWeather.format(hourlyWeatherDto.dt.toLong()*1000).myCapitalize(),
             temp = hourlyWeatherDto.temp.substring(0, 2) + "\u00B0",
             feelsLike = hourlyWeatherDto.feelsLike.substring(0, 2) + "\u00B0",
             pressure = hourlyWeatherDto.pressure,
@@ -65,9 +67,7 @@ class WeatherListMapper {
         return DailyWeatherDbModel(
             id = 0,
             dt = formatForDailyWeather.format(dailyWeatherDto.dt.toLong() * 1000)
-                .replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-                },
+                .myCapitalize(),
             tempDay = dailyWeatherDto.temp.day.substring(0, 2) + "\u00B0",
             tempNight = dailyWeatherDto.temp.night.substring(0, 2) + "\u00B0",
             feelsLikeDay = dailyWeatherDto.feelsLike.day.substring(0, 2) + "\u00B0",
@@ -83,12 +83,12 @@ class WeatherListMapper {
         )
     }
 
-    fun mapDailyDtoListToDailyDaoList(list: List<DailyWeatherDto>) =
+    fun mapDailyDtoListToDailyDbModelList(list: List<DailyWeatherDto>) =
         list.map {
             mapDailyDtoToDailyDbModel(it)
         }
 
-    private fun mapHourlyDtoListToHourlyDbModelList(list: List<HourlyWeatherDto>) =
+    fun mapHourlyDtoListToHourlyDbModelList(list: List<HourlyWeatherDto>) =
         list.map {
             mapHourlyDtoToHourlyDbModel(it)
         }
@@ -113,6 +113,7 @@ class WeatherListMapper {
 
     private fun mapHourlyDbModelToHourlyEntity(hourlyWeatherDbModel: HourlyWeatherDbModel): HourlyWeatherEntity {
         return HourlyWeatherEntity(
+            id = hourlyWeatherDbModel.id,
             dt = hourlyWeatherDbModel.dt,
             temp = hourlyWeatherDbModel.temp,
             feelsLike = hourlyWeatherDbModel.feelsLike,
@@ -151,7 +152,7 @@ class WeatherListMapper {
             mapDailyDbModelToDailyEntity(it)
         }
 
-    private fun mapHourlyDaoListToHourlyEntityList(list: List<HourlyWeatherDbModel>) =
+    fun mapHourlyDbModelListToHourlyEntityList(list: List<HourlyWeatherDbModel>) =
         list.map {
             mapHourlyDbModelToHourlyEntity(it)
         }

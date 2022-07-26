@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.testretrofitapp.R
 import com.example.testretrofitapp.databinding.FragmentOverviewBinding
+import com.example.testretrofitapp.presentation.hourlyWeatherForecast.HourlyWeatherAdapter
+import com.example.testretrofitapp.presentation.weekWeatherForecast.WeatherWeekAdapter
 import java.util.*
 
 
@@ -24,6 +26,7 @@ class OverviewFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentOverviewBinding is null")
 
     private lateinit var weatherAdapter: WeatherWeekAdapter
+    private lateinit var hourlyWeatherAdapter: HourlyWeatherAdapter
 
     private val viewModel by lazy {
         ViewModelProvider(
@@ -66,7 +69,7 @@ class OverviewFragment : Fragment() {
             it?.let {
                 val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
                 val currentTime = System.currentTimeMillis()
-                val currentTimeString = format.format(currentTime).toString() + it.dt
+                val currentTimeString = format.format(currentTime).toString() + "\n"+it.dt
                 val feelLikeTemp = "Ощущается как " + it.feelsLike
                 with(binding) {
                     bindImage(ivWeatherIcon, it.icon)
@@ -79,6 +82,19 @@ class OverviewFragment : Fragment() {
         }
         viewModel.weekWeatherDto.observe(viewLifecycleOwner) {
             weatherAdapter.submitList(it)
+        }
+        viewModel.hourlyWeatherDto.observe(viewLifecycleOwner) {
+            hourlyWeatherAdapter.submitList(it)
+            //            for(i in it){
+//                Log.d("TAG", i.dt)
+//            }
+//            Log.d("TAG", it.size.toString())
+        }
+        binding.clCurrentWeather.setOnClickListener {
+            with(binding.rvHourlyWeather){
+                visibility = if(visibility == View.GONE) View.VISIBLE
+                else View.GONE
+            }
         }
     }
 
@@ -99,6 +115,11 @@ class OverviewFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity)
             weatherAdapter = WeatherWeekAdapter()
             adapter = weatherAdapter
+        }
+        with(binding.rvHourlyWeather) {
+            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            hourlyWeatherAdapter = HourlyWeatherAdapter()
+            adapter = hourlyWeatherAdapter
         }
     }
 }

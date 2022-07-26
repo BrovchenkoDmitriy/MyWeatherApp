@@ -15,6 +15,7 @@ class OverViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = WeatherForecastRepositoryImpl(application)
     private val getCurrentWeatherUseCase = GetCurrentWeatherUseCase(repository)
     private val getWeekWeatherUseCase = GetWeekWeatherUseCase(repository)
+    private val getHourlyWeatherUseCase = GeHourlyWeatherUseCase(repository)
     private val loadDataUseCase = LoadDataUseCase(repository)
 
 
@@ -30,6 +31,10 @@ class OverViewModel(application: Application) : AndroidViewModel(application) {
     val weekWeatherDto: LiveData<List<DailyWeatherEntity>>
         get() = _weekWeatherDto
 
+    private val _hourlyWeatherDto = MutableLiveData<List<HourlyWeatherEntity>>()
+    val hourlyWeatherDto: LiveData<List<HourlyWeatherEntity>>
+        get() = _hourlyWeatherDto
+
 
     init {
         Log.d("TAG", "start init in OverViewModel.kt")
@@ -41,6 +46,7 @@ class OverViewModel(application: Application) : AndroidViewModel(application) {
             loadDataUseCase()
             _weekWeatherDto.value = getWeekWeatherUseCase.invoke()
             _currentWeatherDto.value = getCurrentWeatherUseCase.invoke()
+            _hourlyWeatherDto.value = getHourlyWeatherUseCase.invoke()
         }
     }
 }

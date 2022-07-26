@@ -32,6 +32,7 @@ data class DailyWeatherEntity(
 )
 
 data class HourlyWeatherEntity(
+    val id:Int = 0,
     val dt: String,
     val temp: String,
     val feelsLike: String,

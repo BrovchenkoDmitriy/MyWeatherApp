@@ -39,7 +39,10 @@ data class DailyWeatherDbModel(
     val pop: String
 )
 
+@Entity(tableName = "hourly_weather")
 data class HourlyWeatherDbModel(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
     val dt: String,
     val temp: String,
     val feelsLike: String,
