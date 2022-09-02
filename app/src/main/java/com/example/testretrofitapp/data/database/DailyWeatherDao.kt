@@ -9,7 +9,7 @@ import androidx.room.Query
 @Dao
 interface DailyWeatherDao{
     @Query("SELECT * FROM daily_weather")
-    fun getWeatherWeek():List<DailyWeatherDbModel>
+    suspend fun getWeatherWeek():List<DailyWeatherDbModel>
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeekWeather(weatherWeek: List<DailyWeatherDbModel>)

@@ -41,7 +41,7 @@ abstract class AppDataBase : RoomDatabase() {
                     application,
                     AppDataBase::class.java,
                     DB_NAME
-                ).allowMainThreadQueries()
+                )//.allowMainThreadQueries()  //Отключает проверку запроса основного потока для Room.
                     .build()
                 //После этой строчки последующие getInstance будет возвращать созданный экземпляр баззы данных
                 INSTANCE = db

@@ -16,17 +16,17 @@ class WeatherForecastRepositoryImpl(application: Application) : WeatherForecastR
     private val mapper = WeatherListMapper()
     private val apiService = WeatherApi.retrofitService
 
-    override fun getCurrentWeather(): CurrentWeatherEntity {
+    override suspend fun getCurrentWeather(): CurrentWeatherEntity {
         val currentWeatherDbModel = currentWeatherDao.getWeatherDbModel()
         return mapper.mapCurrentDbModelToCurrentEntity(currentWeatherDbModel)
     }
 
-    override fun getWeekWeather(): List<DailyWeatherEntity> {
+    override suspend fun getWeekWeather(): List<DailyWeatherEntity> {
         val listOfDailyWeatherDbModel = dailyWeatherDao.getWeatherWeek()
         return mapper.mapDailyDbModelListToDailyEntityList(listOfDailyWeatherDbModel)
     }
 
-    override fun getHourlyWeather(): List<HourlyWeatherEntity> {
+    override suspend fun getHourlyWeather(): List<HourlyWeatherEntity> {
         val listOfHourlyWeatherDbModel = hourlyWeatherDao.getHourlyWeather()
         return mapper.mapHourlyDbModelListToHourlyEntityList(listOfHourlyWeatherDbModel)
     }
