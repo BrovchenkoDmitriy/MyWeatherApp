@@ -1,22 +1,25 @@
 package com.example.testretrofitapp.presentation
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.testretrofitapp.data.WeatherForecastRepositoryImpl
 import com.example.testretrofitapp.domain.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class OverViewModel(application: Application) : AndroidViewModel(application) {
+class OverViewModel @Inject constructor(private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
+                                        private val getWeekWeatherUseCase: GetWeekWeatherUseCase,
+                                        private val getHourlyWeatherUseCase: GeHourlyWeatherUseCase,
+                                        private val loadDataUseCase: LoadDataUseCase)
+                    : ViewModel() {
 
-    private val repository = WeatherForecastRepositoryImpl(application)
-    private val getCurrentWeatherUseCase = GetCurrentWeatherUseCase(repository)
-    private val getWeekWeatherUseCase = GetWeekWeatherUseCase(repository)
-    private val getHourlyWeatherUseCase = GeHourlyWeatherUseCase(repository)
-    private val loadDataUseCase = LoadDataUseCase(repository)
+//    private val repository = WeatherForecastRepositoryImpl(application)
+//    private val getCurrentWeatherUseCase = GetCurrentWeatherUseCase(repository)
+//    private val getWeekWeatherUseCase = GetWeekWeatherUseCase(repository)
+//    private val getHourlyWeatherUseCase = GeHourlyWeatherUseCase(repository)
+//    private val loadDataUseCase = LoadDataUseCase(repository)
 
 
 //    private val _status = MutableLiveData<String>()
@@ -45,7 +48,9 @@ class OverViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             loadDataUseCase()
             _weekWeatherDto.value = getWeekWeatherUseCase.invoke()
+
             _currentWeatherDto.value = getCurrentWeatherUseCase.invoke()
+
             _hourlyWeatherDto.value = getHourlyWeatherUseCase.invoke()
         }
     }

@@ -10,12 +10,13 @@ private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
-private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+private const val BASE_URL = "http://api.openweathermap.org/data/2.5/"
 //https://api.openweathermap.org/data/2.5/
 // onecall?lat=50.2997427&lon=127.5023826&exclude=minutely,hourly,alerts&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru
 // https://api.openweathermap.org/data/2.5/
 // onecall?lat=50.2997427&lon=127.5023826&exclude=minutely,alerts&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru
 //   weather?q=Благовещенск&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru"
+//http://188.166.16.132/data/2.5/onecall?lat=50.2997427&lon=127.5023826&exclude=minutely,alerts&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .baseUrl(BASE_URL)

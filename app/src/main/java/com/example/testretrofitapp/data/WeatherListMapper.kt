@@ -11,9 +11,10 @@ import com.example.testretrofitapp.domain.CurrentWeatherEntity
 import com.example.testretrofitapp.domain.DailyWeatherEntity
 import com.example.testretrofitapp.domain.HourlyWeatherEntity
 import java.util.*
+import javax.inject.Inject
 
 
-class WeatherListMapper {
+class WeatherListMapper @Inject constructor(){
 
     private val language = Locale.getDefault()
     private val formatForCurrentWeather = SimpleDateFormat("(HH:mm)", language)
