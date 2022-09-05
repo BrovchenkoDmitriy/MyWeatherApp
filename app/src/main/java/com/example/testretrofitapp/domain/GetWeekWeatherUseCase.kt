@@ -1,5 +1,7 @@
 package com.example.testretrofitapp.domain
 
-class GetWeekWeatherUseCase(private val weatherForecastRepository: WeatherForecastRepository) {
+import javax.inject.Inject
+
+class GetWeekWeatherUseCase @Inject constructor(private val weatherForecastRepository: WeatherForecastRepository) {
     suspend operator fun invoke() = weatherForecastRepository.getWeekWeather()
 }

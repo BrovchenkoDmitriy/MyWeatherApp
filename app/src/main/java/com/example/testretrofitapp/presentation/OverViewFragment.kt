@@ -1,5 +1,6 @@
 package com.example.testretrofitapp.presentation
 
+import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.util.Log
@@ -13,10 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.testretrofitapp.R
+import com.example.testretrofitapp.WeatherApp
 import com.example.testretrofitapp.databinding.FragmentOverviewBinding
 import com.example.testretrofitapp.presentation.hourlyWeatherForecast.HourlyWeatherAdapter
 import com.example.testretrofitapp.presentation.weekWeatherForecast.WeatherWeekAdapter
 import java.util.*
+import javax.inject.Inject
 
 
 class OverviewFragment : Fragment() {
@@ -28,11 +31,23 @@ class OverviewFragment : Fragment() {
     private lateinit var weatherAdapter: WeatherWeekAdapter
     private lateinit var hourlyWeatherAdapter: HourlyWeatherAdapter
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as WeatherApp).component
+    }
+
     private val viewModel by lazy {
         ViewModelProvider(
             this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+           viewModelFactory
         )[OverViewModel::class.java]
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(

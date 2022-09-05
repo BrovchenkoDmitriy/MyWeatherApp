@@ -1,0 +1,19 @@
+package com.example.testretrofitapp.di
+
+import android.app.Application
+import com.example.testretrofitapp.presentation.OverviewFragment
+import dagger.BindsInstance
+import dagger.Component
+
+@Component(modules = [DataModule::class, ViewModelModule::class])
+interface ApplicationComponent {
+
+    fun inject(fragment: OverviewFragment)
+
+    @Component.Factory
+    interface Factory{
+        fun create(
+            @BindsInstance application: Application
+        ):ApplicationComponent
+    }
+}
