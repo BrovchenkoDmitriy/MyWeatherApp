@@ -17,27 +17,32 @@ import dagger.Provides
 interface DataModule {
 
     @Binds
+    @ApplicationScope
     fun bindWeatherForecastRepository(
         impl: WeatherForecastRepositoryImpl
     ): WeatherForecastRepository
 
     companion object{
         @Provides
+        @ApplicationScope
         fun provideCurrentWeatherDao(application: Application):CurrentWeatherDao{
             return AppDataBase.getInstance(application).currentWeatherDao()
         }
 
         @Provides
+        @ApplicationScope
         fun provideDailyWeatherDao(application: Application): DailyWeatherDao {
             return AppDataBase.getInstance(application).dailyWeatherDao()
         }
 
         @Provides
+        @ApplicationScope
         fun provideHourlyWeatherDao(application: Application): HourlyWeatherDao {
             return AppDataBase.getInstance(application).hourlyWeatherDao()
         }
 
         @Provides
+        @ApplicationScope
         fun provideOpenWeatherApi(): OpenWeatherAPi {
             return WeatherApi.retrofitService
         }
