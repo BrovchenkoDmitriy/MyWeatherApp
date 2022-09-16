@@ -15,17 +15,6 @@ class OverViewModel @Inject constructor(private val getCurrentWeatherUseCase: Ge
                                         private val loadDataUseCase: LoadDataUseCase)
                     : ViewModel() {
 
-//    private val repository = WeatherForecastRepositoryImpl(application)
-//    private val getCurrentWeatherUseCase = GetCurrentWeatherUseCase(repository)
-//    private val getWeekWeatherUseCase = GetWeekWeatherUseCase(repository)
-//    private val getHourlyWeatherUseCase = GeHourlyWeatherUseCase(repository)
-//    private val loadDataUseCase = LoadDataUseCase(repository)
-
-
-//    private val _status = MutableLiveData<String>()
-//    val status: LiveData<String> = _status
-//    //  get() = _status
-
     private val _currentWeatherDto = MutableLiveData<CurrentWeatherEntity>()
     val currentWeatherDto: LiveData<CurrentWeatherEntity>
         get() = _currentWeatherDto
