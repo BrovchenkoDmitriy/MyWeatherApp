@@ -1,7 +1,7 @@
 package com.example.testretrofitapp.di
 
 import android.app.Application
-import com.example.testretrofitapp.presentation.OverviewFragment
+import com.example.testretrofitapp.presentation.currentWeather.OverviewFragment
 import dagger.BindsInstance
 import dagger.Component
 

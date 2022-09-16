@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation
+package com.example.testretrofitapp.presentation.currentWeather
 
 import android.util.Log
 import androidx.lifecycle.LiveData

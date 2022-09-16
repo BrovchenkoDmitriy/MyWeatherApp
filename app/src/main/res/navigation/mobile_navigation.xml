@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/navigation_current_weather">
+
+    <fragment
+        android:id="@+id/navigation_current_weather"
+        android:name="com.example.testretrofitapp.presentation.currentWeather.OverviewFragment"
+        android:label="@string/title_current_weather" />
+
+    <fragment
+        android:id="@+id/navigation_week_forecast"
+        android:name="com.example.testretrofitapp.presentation.weekForecast.WeekForecastFragment"
+        android:label="@string/title_week_forecast"
+        tools:layout="@layout/fragment_week_forecast" />
+
+    <fragment
+        android:id="@+id/navigation_map_fragment"
+        android:name="com.example.testretrofitapp.presentation.googleMap.MapFragment"
+        android:label="@string/title_map_fragment" />
+</navigation>
