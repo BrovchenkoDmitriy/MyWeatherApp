@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation
+package com.example.testretrofitapp.presentation.currentWeather
 
 import android.content.Context
 import android.icu.text.SimpleDateFormat
@@ -16,6 +16,7 @@ import coil.load
 import com.example.testretrofitapp.R
 import com.example.testretrofitapp.WeatherApp
 import com.example.testretrofitapp.databinding.FragmentOverviewBinding
+import com.example.testretrofitapp.presentation.ViewModelFactory
 import com.example.testretrofitapp.presentation.hourlyWeatherForecast.HourlyWeatherAdapter
 import com.example.testretrofitapp.presentation.weekWeatherForecast.WeatherWeekAdapter
 import java.util.*

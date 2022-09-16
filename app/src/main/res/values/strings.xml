@@ -2,8 +2,12 @@
     <string name="app_name">TestRetrofitApp</string>
     <string name="get_weather">Узнать погоду в Благовещенске</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Здесь будет прогноз погоды на неделю</string>
     <string name="iv_item_weather_icon">Weather icon</string>
     <string name="feels_like_temp">Ощущается как </string>
     <string name="weather_icon">Icon of weather</string>
+
+    <string name="title_current_weather">Сегодня</string>
+    <string name="title_week_forecast">Неделя</string>
+    <string name="title_map_fragment">Карта</string>
 </resources>
