@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation.hourlyWeatherForecast
+package com.example.testretrofitapp.presentation.currentWeather.hourlyForecastRecyclerView
 
 import android.util.Log
 import android.view.LayoutInflater

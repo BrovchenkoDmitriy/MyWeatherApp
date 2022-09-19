@@ -14,7 +14,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class WeatherListMapper @Inject constructor(){
+class WeatherListMapper @Inject constructor() {
 
     private val language = Locale.getDefault()
     private val formatForCurrentWeather = SimpleDateFormat("(HH:mm)", language)
@@ -35,8 +35,10 @@ class WeatherListMapper @Inject constructor(){
         return CurrentWeatherDbModel(
             id = 0,
             dt = formatForCurrentWeather.format(currentWeatherDto.dt.toLong() * 1000),
-            temp = currentWeatherDto.temp.substring(0, 2) + "\u00B0C",
-            feelsLike = currentWeatherDto.feelsLike.substring(0, 2) + "\u00B0C",
+            temp = currentWeatherDto.temp.substring(0, currentWeatherDto.temp.indexOf('.')) + "°C",
+            feelsLike = currentWeatherDto
+                .feelsLike
+                .substring(0, currentWeatherDto.feelsLike.indexOf('.')) + "\u00B0C",
             pressure = currentWeatherDto.pressure,
             humidity = currentWeatherDto.humidity,
             windSpeed = currentWeatherDto.windSpeed,
@@ -50,9 +52,15 @@ class WeatherListMapper @Inject constructor(){
     private fun mapHourlyDtoToHourlyDbModel(hourlyWeatherDto: HourlyWeatherDto): HourlyWeatherDbModel {
         return HourlyWeatherDbModel(
             id = 0,
-            dt = formatForHourlyWeather.format(hourlyWeatherDto.dt.toLong()*1000).myCapitalize(),
-            temp = hourlyWeatherDto.temp.substring(0, 2) + "\u00B0",
-            feelsLike = hourlyWeatherDto.feelsLike.substring(0, 2) + "\u00B0",
+            dt = formatForHourlyWeather.format(hourlyWeatherDto.dt.toLong() * 1000).myCapitalize(),
+            temp = hourlyWeatherDto.temp.substring(
+                0,
+                hourlyWeatherDto.temp.indexOf('.')
+            ) + "\u00B0",
+            feelsLike = hourlyWeatherDto.feelsLike.substring(
+                0,
+                hourlyWeatherDto.temp.indexOf('.')
+            ) + "\u00B0",
             pressure = hourlyWeatherDto.pressure,
             humidity = hourlyWeatherDto.humidity,
             windSpeed = hourlyWeatherDto.windSpeed,
@@ -69,10 +77,22 @@ class WeatherListMapper @Inject constructor(){
             id = 0,
             dt = formatForDailyWeather.format(dailyWeatherDto.dt.toLong() * 1000)
                 .myCapitalize(),
-            tempDay = dailyWeatherDto.temp.day.substring(0, 2) + "\u00B0",
-            tempNight = dailyWeatherDto.temp.night.substring(0, 2) + "\u00B0",
-            feelsLikeDay = dailyWeatherDto.feelsLike.day.substring(0, 2) + "\u00B0",
-            feelsLikeNight = dailyWeatherDto.feelsLike.night.substring(0, 2) + "\u00B0",
+            tempDay = dailyWeatherDto.temp.day.substring(
+                0,
+                dailyWeatherDto.temp.day.indexOf('.')
+            ) + "\u00B0",
+            tempNight = dailyWeatherDto.temp.night.substring(
+                0,
+                dailyWeatherDto.temp.night.indexOf('.')
+            ) + "\u00B0",
+            feelsLikeDay = dailyWeatherDto.feelsLike.day.substring(
+                0,
+                dailyWeatherDto.feelsLike.day.indexOf('.')
+            ) + "\u00B0",
+            feelsLikeNight = dailyWeatherDto.feelsLike.night.substring(
+                0,
+                dailyWeatherDto.feelsLike.night.indexOf('.')
+            ) + "\u00B0",
             pressure = dailyWeatherDto.pressure,
             humidity = dailyWeatherDto.humidity,
             windSpeed = dailyWeatherDto.windSpeed,

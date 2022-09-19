@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation.weekWeatherForecast
+package com.example.testretrofitapp.presentation.weekForecast.weekForecastRecyclerView
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.testretrofitapp.domain.DailyWeatherEntity

@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation.hourlyWeatherForecast
+package com.example.testretrofitapp.presentation.currentWeather.hourlyForecastRecyclerView
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.testretrofitapp.domain.HourlyWeatherEntity
