@@ -17,8 +17,8 @@ import com.example.testretrofitapp.R
 import com.example.testretrofitapp.WeatherApp
 import com.example.testretrofitapp.databinding.FragmentOverviewBinding
 import com.example.testretrofitapp.presentation.ViewModelFactory
-import com.example.testretrofitapp.presentation.hourlyWeatherForecast.HourlyWeatherAdapter
-import com.example.testretrofitapp.presentation.weekWeatherForecast.WeatherWeekAdapter
+import com.example.testretrofitapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
+import com.example.testretrofitapp.presentation.weekForecast.weekForecastRecyclerView.WeatherWeekAdapter
 import java.util.*
 import javax.inject.Inject
 

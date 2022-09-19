@@ -1,4 +1,4 @@
-package com.example.testretrofitapp.presentation.hourlyWeatherForecast
+package com.example.testretrofitapp.presentation.currentWeather.hourlyForecastRecyclerView
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testretrofitapp.databinding.HourlyWeatherItemBinding
