@@ -68,10 +68,17 @@ class OverviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("TAG", "onViewCreated")
+        val lat = 50.2997427
+        val lon = 127.5023826
+ //       val url = "lat=$lat&lon=$lon&exclude=minutely,alerts&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru"
+        viewModel.getWeather(lat, lon, WeatherApp.EXCLUDE, WeatherApp.APPID, WeatherApp.UNITS, WeatherApp.LANG)
         setupRecyclerView()
         initData()
         binding.loadWeatherButton.setOnClickListener {
-            viewModel.getWeather()
+//            val lat = 50.2997427
+//            val lon = 127.5023826
+          //  val url = "lat=$lat&lon=$lon&exclude=minutely,alerts&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru"
+            viewModel.getWeather(lat, lon, WeatherApp.EXCLUDE, WeatherApp.APPID, WeatherApp.UNITS, WeatherApp.LANG)
             initData()
         }
     }
@@ -81,7 +88,7 @@ class OverviewFragment : Fragment() {
 //            println(it)
 //        }
         Log.d("TAG", "startInitData")
-        viewModel.currentWeatherDto.observe(viewLifecycleOwner) {
+        viewModel.currentWeatherEntity.observe(viewLifecycleOwner) {
             it?.let {
                 val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
                 val currentTime = System.currentTimeMillis()
@@ -96,10 +103,10 @@ class OverviewFragment : Fragment() {
                 }
             }
         }
-        viewModel.weekWeatherDto.observe(viewLifecycleOwner) {
+        viewModel.weekWeatherEntity.observe(viewLifecycleOwner) {
             weatherAdapter.submitList(it)
         }
-        viewModel.hourlyWeatherDto.observe(viewLifecycleOwner) {
+        viewModel.hourlyWeatherEntity.observe(viewLifecycleOwner) {
             hourlyWeatherAdapter.submitList(it)
             //            for(i in it){
 //                Log.d("TAG", i.dt)

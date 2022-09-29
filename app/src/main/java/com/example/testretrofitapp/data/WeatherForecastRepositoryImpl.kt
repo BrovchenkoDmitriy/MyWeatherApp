@@ -40,11 +40,24 @@ class WeatherForecastRepositoryImpl @Inject constructor(
         return mapper.mapHourlyDbModelListToHourlyEntityList(listOfHourlyWeatherDbModel)
     }
 
-    override suspend fun loadData() {
+    override suspend fun loadData(
+        lat: Double,
+        lon: Double,
+        exclude: String,
+        appid: String,
+        units: String,
+        lang: String
+    ) {
+
         try {
-            val weatherDto = apiService.getWeather()
-            Log.d("TAG", weatherDto.currentDto.temp)
+            Log.d("TAGA", "try make retrofit")
+        //      val weatherDto = getData(lat, lon, exclude, appid, units, lang)
+
+            val weatherDto = apiService.getWeather(lat, lon, exclude, appid, units, lang)
+            Log.d("TAGA", weatherDto.currentDto.temp)
+            Log.d("TAGA", weatherDto.toString())
             val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto.currentDto)
+            Log.d("TAGA", currentWeather.temp)
             val weekWeather = mapper.mapDailyDtoListToDailyDbModelList(weatherDto.dailyDto)
             val hourlyWeather = mapper.mapHourlyDtoListToHourlyDbModelList(weatherDto.hourlyDto)
 

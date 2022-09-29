@@ -35,10 +35,8 @@ class WeatherListMapper @Inject constructor() {
         return CurrentWeatherDbModel(
             id = 0,
             dt = formatForCurrentWeather.format(currentWeatherDto.dt.toLong() * 1000),
-            temp = currentWeatherDto.temp.substring(0, currentWeatherDto.temp.indexOf('.')) + "°C",
-            feelsLike = currentWeatherDto
-                .feelsLike
-                .substring(0, currentWeatherDto.feelsLike.indexOf('.')) + "\u00B0C",
+            temp = "${currentWeatherDto.temp.toDouble().toInt()}°C",
+            feelsLike = "${currentWeatherDto.feelsLike.toDouble().toInt()}\u00B0C",
             pressure = currentWeatherDto.pressure,
             humidity = currentWeatherDto.humidity,
             windSpeed = currentWeatherDto.windSpeed,
@@ -53,14 +51,8 @@ class WeatherListMapper @Inject constructor() {
         return HourlyWeatherDbModel(
             id = 0,
             dt = formatForHourlyWeather.format(hourlyWeatherDto.dt.toLong() * 1000).myCapitalize(),
-            temp = hourlyWeatherDto.temp.substring(
-                0,
-                hourlyWeatherDto.temp.indexOf('.')
-            ) + "\u00B0",
-            feelsLike = hourlyWeatherDto.feelsLike.substring(
-                0,
-                hourlyWeatherDto.temp.indexOf('.')
-            ) + "\u00B0",
+            temp = "${hourlyWeatherDto.temp.toDouble().toInt()}°C",
+            feelsLike = "${hourlyWeatherDto.feelsLike.toDouble().toInt()}°C",
             pressure = hourlyWeatherDto.pressure,
             humidity = hourlyWeatherDto.humidity,
             windSpeed = hourlyWeatherDto.windSpeed,
@@ -77,22 +69,10 @@ class WeatherListMapper @Inject constructor() {
             id = 0,
             dt = formatForDailyWeather.format(dailyWeatherDto.dt.toLong() * 1000)
                 .myCapitalize(),
-            tempDay = dailyWeatherDto.temp.day.substring(
-                0,
-                dailyWeatherDto.temp.day.indexOf('.')
-            ) + "\u00B0",
-            tempNight = dailyWeatherDto.temp.night.substring(
-                0,
-                dailyWeatherDto.temp.night.indexOf('.')
-            ) + "\u00B0",
-            feelsLikeDay = dailyWeatherDto.feelsLike.day.substring(
-                0,
-                dailyWeatherDto.feelsLike.day.indexOf('.')
-            ) + "\u00B0",
-            feelsLikeNight = dailyWeatherDto.feelsLike.night.substring(
-                0,
-                dailyWeatherDto.feelsLike.night.indexOf('.')
-            ) + "\u00B0",
+            tempDay ="${dailyWeatherDto.temp.day.toDouble().toInt()}°C",
+            tempNight = "${dailyWeatherDto.temp.night.toDouble().toInt()}\u00B0",
+            feelsLikeDay = "${dailyWeatherDto.feelsLike.day.toDouble().toInt()}\u00B0",
+            feelsLikeNight = "${dailyWeatherDto.feelsLike.night.toDouble().toInt()}\u00B0",
             pressure = dailyWeatherDto.pressure,
             humidity = dailyWeatherDto.humidity,
             windSpeed = dailyWeatherDto.windSpeed,

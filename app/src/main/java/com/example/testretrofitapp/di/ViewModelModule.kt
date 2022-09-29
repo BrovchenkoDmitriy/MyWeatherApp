@@ -2,6 +2,7 @@ package com.example.testretrofitapp.di
 
 import androidx.lifecycle.ViewModel
 import com.example.testretrofitapp.presentation.currentWeather.OverViewModel
+import com.example.testretrofitapp.presentation.googleMap.MapViewModel
 import com.example.testretrofitapp.presentation.weekForecast.WeekForecastViewModel
 import dagger.Binds
 import dagger.Module
@@ -19,4 +20,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(WeekForecastViewModel::class)
     fun bindWeekForecastViewModel(viewModel: WeekForecastViewModel):ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MapViewModel::class)
+    fun bindMapViewModel(viewModel: MapViewModel):ViewModel
 }
