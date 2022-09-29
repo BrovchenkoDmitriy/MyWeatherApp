@@ -5,39 +5,63 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.strictmode.FragmentStrictMode
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.testretrofitapp.R
+import com.example.testretrofitapp.WeatherApp
 import com.example.testretrofitapp.databinding.FragmentMapBinding
+import com.example.testretrofitapp.presentation.ViewModelFactory
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val component by lazy {
+        (requireActivity().application as WeatherApp).component
+    }
+
+    private val mapViewModel by lazy {
+        ViewModelProvider(
+            this,
+            viewModelFactory
+        )[MapViewModel::class.java]
+    }
+
     private lateinit var mMap: GoogleMap
-    private lateinit var mapViewModel: MapViewModel
+
+    private lateinit var currentLocation: LatLng
+
+
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        mapViewModel =
-            ViewModelProvider(this)[MapViewModel::class.java]
+    ): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -46,21 +70,80 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        currentLocation = getCurrentLocation()
+        loadData(currentLocation.latitude,currentLocation.longitude)
+
     }
+
+
     override fun onMapReady(googleMap: GoogleMap) {
-        var indexPosition = 1
+
         mMap = googleMap
+    //    var i = 0
+
+        val startMarker = mMap.addMarker(MarkerOptions().position(currentLocation))
+        startMarker?.tag = 0
+        mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
+            startMarker?.title = it.temp + " " + it.description
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 7f))
+
         mMap.setOnMapLongClickListener {
-            mMap.addMarker(
-                MarkerOptions().position(it)
-                    .title("Position  ${indexPosition++} ${it.latitude} ${it.longitude}")
-            )
+            val lat = it.latitude
+            val lon = it.longitude
+            mMap.addMarker(MarkerOptions().position(LatLng(lat,lon)))
         }
 
-        val context = requireContext()
-        val locationManager =context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        mMap.setOnMarkerClickListener{
+            onMarkerClick(it)
+        }
+    }
 
-        if (ActivityCompat.checkSelfPermission(
+    private fun onMarkerClick(marker: Marker):Boolean{
+       lifecycleScope.launch{
+           loadData(marker.position.latitude,marker.position.longitude)
+           marker.title = "Загрузка данных"
+           marker.snippet="."
+           marker.showInfoWindow()
+           delay(1000)
+           marker.hideInfoWindow()
+
+           marker.title = "Загрузка данных"
+           marker.snippet=".."
+           marker.showInfoWindow()
+           delay(1000)
+           marker.hideInfoWindow()
+
+           marker.title = "Загрузка данных"
+           marker.snippet="..."
+           marker.showInfoWindow()
+           delay(1000)
+
+           marker.hideInfoWindow()
+           mapViewModel.currentWeatherDto.observe(viewLifecycleOwner){
+               marker.title = it.description
+               marker.snippet = it.temp
+           }
+           marker.showInfoWindow()
+        }
+        return true
+    }
+    private fun loadData(lat: Double, lon: Double) {
+        mapViewModel.getWeather(
+            lat,
+            lon,
+            WeatherApp.EXCLUDE,
+            WeatherApp.APPID,
+            WeatherApp.UNITS,
+            WeatherApp.LANG
+        )
+    }
+
+    private fun getCurrentLocation(): LatLng {
+        val context = requireContext()
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        val location = if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -68,14 +151,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            //TODO: Consider calling
+            // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf(
@@ -84,15 +166,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 ),
                 1
             )
-            return
+            return LatLng(0.0, 0.0)
+        } else {
+            locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
         }
 
-        val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
         val lat = location?.latitude
-        val lng = location?.longitude
+        val lon = location?.longitude
 
-        val currentLocation = LatLng(lat ?: 0.0, lng ?: 0.0)
-        mMap.addMarker(MarkerOptions().position(currentLocation).title("I'm here! ^_^"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 7f))
+        currentLocation = LatLng(lat ?: 0.0, lon ?: 0.0)
+        return currentLocation
     }
 }

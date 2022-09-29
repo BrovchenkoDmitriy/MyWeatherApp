@@ -2,6 +2,7 @@ package com.example.testretrofitapp.di
 
 import android.app.Application
 import com.example.testretrofitapp.presentation.currentWeather.OverviewFragment
+import com.example.testretrofitapp.presentation.googleMap.MapFragment
 import com.example.testretrofitapp.presentation.weekForecast.WeekForecastFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -12,6 +13,7 @@ interface ApplicationComponent {
 
     fun inject(fragment: OverviewFragment)
     fun inject(fragment:WeekForecastFragment)
+    fun inject(fragment:MapFragment)
 
     @Component.Factory
     interface Factory{

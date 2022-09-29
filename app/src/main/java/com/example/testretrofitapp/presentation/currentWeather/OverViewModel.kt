@@ -15,32 +15,42 @@ class OverViewModel @Inject constructor(private val getCurrentWeatherUseCase: Ge
                                         private val loadDataUseCase: LoadDataUseCase)
                     : ViewModel() {
 
-    private val _currentWeatherDto = MutableLiveData<CurrentWeatherEntity>()
-    val currentWeatherDto: LiveData<CurrentWeatherEntity>
-        get() = _currentWeatherDto
+    private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity>()
+    val currentWeatherEntity: LiveData<CurrentWeatherEntity>
+        get() = _currentWeatherEntity
 
-    private val _weekWeatherDto = MutableLiveData<List<DailyWeatherEntity>>()
-    val weekWeatherDto: LiveData<List<DailyWeatherEntity>>
-        get() = _weekWeatherDto
+    private val _weekWeatherEntity = MutableLiveData<List<DailyWeatherEntity>>()
+    val weekWeatherEntity: LiveData<List<DailyWeatherEntity>>
+        get() = _weekWeatherEntity
 
-    private val _hourlyWeatherDto = MutableLiveData<List<HourlyWeatherEntity>>()
-    val hourlyWeatherDto: LiveData<List<HourlyWeatherEntity>>
-        get() = _hourlyWeatherDto
+    private val _hourlyWeatherEntity = MutableLiveData<List<HourlyWeatherEntity>>()
+    val hourlyWeatherEntity: LiveData<List<HourlyWeatherEntity>>
+        get() = _hourlyWeatherEntity
 
 
     init {
         Log.d("TAG", "start init in OverViewModel.kt")
-        getWeather()
+       // getWeather(url)
     }
 
-    fun getWeather() {
+    fun getWeather(lat: Double,
+                   lon: Double,
+                   exclude: String,
+                   appid: String,
+                   units: String,
+                   lang: String) {
         viewModelScope.launch {
-            loadDataUseCase()
-            _weekWeatherDto.value = getWeekWeatherUseCase.invoke()
+            loadDataUseCase(lat,
+                lon,
+                exclude,
+                appid,
+                units,
+                lang)
+            _weekWeatherEntity.value = getWeekWeatherUseCase.invoke()
 
-            _currentWeatherDto.value = getCurrentWeatherUseCase.invoke()
+            _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
 
-            _hourlyWeatherDto.value = getHourlyWeatherUseCase.invoke()
+            _hourlyWeatherEntity.value = getHourlyWeatherUseCase.invoke()
         }
     }
 }
