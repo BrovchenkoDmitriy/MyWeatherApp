@@ -16,9 +16,9 @@ class WeekForecastViewModel @Inject constructor(
     val weekWeatherDto: LiveData<List<DailyWeatherEntity>>
         get() = _weekWeatherDto
 
-    init {
-        getWeather()
-    }
+//    init {
+//        getWeather()
+//    }
 
     fun getWeather() {
         viewModelScope.launch {
