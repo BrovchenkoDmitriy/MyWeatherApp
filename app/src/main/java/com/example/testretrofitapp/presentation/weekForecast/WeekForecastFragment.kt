@@ -52,6 +52,11 @@ class WeekForecastFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getWeather()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
