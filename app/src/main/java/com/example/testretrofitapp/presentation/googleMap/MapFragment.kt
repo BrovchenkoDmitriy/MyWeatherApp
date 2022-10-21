@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,22 +72,40 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         currentLocation = getCurrentLocation()
-        loadData(currentLocation.latitude,currentLocation.longitude)
+        //loadData(currentLocation.latitude,currentLocation.longitude)
+    }
 
+    override fun onResume() {
+        super.onResume()
+        mapViewModel.getLiveData()
     }
 
 
     override fun onMapReady(googleMap: GoogleMap) {
 
         mMap = googleMap
-    //    var i = 0
 
-        val startMarker = mMap.addMarker(MarkerOptions().position(currentLocation))
-        startMarker?.tag = 0
-        mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
-            startMarker?.title = it.temp + " " + it.description
+        val startMarker = mMap.addMarker(MarkerOptions().position(currentLocation)) as Marker
+        Log.d("TAGA", "create startMarker")
+      //  startMarker?.tag = 0
+        lifecycleScope.launch {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 7f))
+            mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
+                startMarker.title = it.temp
+                startMarker.snippet = it.description
+                Log.d("TAGA", it.temp)
+            }
+            delay(500)
+            Log.d("TAGA", "after observe")
+            startMarker.showInfoWindow()
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 7f))
+
+
+
+//        val it = mapViewModel.getCurrentWeather()
+//        startMarker.title = it.temp + " " + it.description
+
+
 
         mMap.setOnMapLongClickListener {
             val lat = it.latitude
@@ -120,10 +139,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
            delay(1000)
 
            marker.hideInfoWindow()
-           mapViewModel.currentWeatherDto.observe(viewLifecycleOwner){
-               marker.title = it.description
-               marker.snippet = it.temp
-           }
+           val it = mapViewModel.getCurrentWeather()
+           //mapViewModel.currentWeatherDto.observe(viewLifecycleOwner){
+               marker.title = it.temp
+           marker.snippet = it.description
+           //}
            marker.showInfoWindow()
         }
         return true
@@ -138,7 +158,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             WeatherApp.LANG
         )
     }
-
     private fun getCurrentLocation(): LatLng {
         val context = requireContext()
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import coil.load
 import com.example.testretrofitapp.R
 import com.example.testretrofitapp.databinding.WeekWeatherItemBinding
+import com.example.testretrofitapp.databinding.WeekWeatherItemSecondBinding
 import com.example.testretrofitapp.domain.DailyWeatherEntity
 
 class WeatherWeekAdapter :
@@ -16,7 +17,7 @@ class WeatherWeekAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
         Log.d("TAG", "onCreateViewHolder")
-        val binding = WeekWeatherItemBinding.inflate(
+        val binding = WeekWeatherItemSecondBinding.inflate( //заменили с WeekWeatherItemBinding на WeekWeatherItemSecondBinding
             LayoutInflater.from(parent.context),
             parent,
             false

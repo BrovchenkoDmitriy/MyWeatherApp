@@ -19,13 +19,19 @@ class MapViewModel @Inject constructor(
     val currentWeatherDto: LiveData<CurrentWeatherEntity>
         get() = _currentWeatherDto
 
-//    fun getCurrentWeather(): CurrentWeatherEntity {
-//        return currentWeatherDto.value ?: throw RuntimeException("Data not exist")
-//    }
+    fun getCurrentWeather(): CurrentWeatherEntity {
+        return currentWeatherDto.value ?: throw RuntimeException("Data not exist")
+    }
 
-    // init{
-    //getWeather(location.value?.latitude?:0.0, location.value?.longitude?:0.0)
-    //  }
+//     init{
+//   getLiveData()
+//      }
+
+fun getLiveData(){
+    viewModelScope.launch {
+        _currentWeatherDto.value = getCurrentWeatherUseCase.invoke()
+    }
+}
 
      fun getWeather(
         lat: Double,
