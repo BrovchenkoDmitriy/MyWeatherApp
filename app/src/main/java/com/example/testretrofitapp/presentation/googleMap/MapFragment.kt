@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -48,6 +50,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var currentLocation: LatLng
 
+    private var locationPermissionsIsGranted by Delegates.notNull<Boolean>()
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -71,6 +74,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        requestLocationPermission()
         currentLocation = getCurrentLocation()
         //loadData(currentLocation.latitude,currentLocation.longitude)
     }
@@ -84,70 +88,65 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
 
         mMap = googleMap
-
-        val startMarker = mMap.addMarker(MarkerOptions().position(currentLocation)) as Marker
-        Log.d("TAGA", "create startMarker")
-      //  startMarker?.tag = 0
-        lifecycleScope.launch {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 7f))
-            mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
-                startMarker.title = it.temp
-                startMarker.snippet = it.description
-                Log.d("TAGA", it.temp)
+        if (locationPermissionsIsGranted) {
+            val startMarker = mMap.addMarker(MarkerOptions().position(currentLocation)) as Marker
+            Log.d("TAGA", "create startMarker")
+            //  startMarker?.tag = 0
+            lifecycleScope.launch {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 7f))
+                mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
+                    startMarker.title = it.temp
+                    startMarker.snippet = it.description
+                    Log.d("TAGA", it.temp)
+                }
+                delay(500)
+                Log.d("TAGA", "after observe")
+                startMarker.showInfoWindow()
             }
-            delay(500)
-            Log.d("TAGA", "after observe")
-            startMarker.showInfoWindow()
         }
-
-
-
-//        val it = mapViewModel.getCurrentWeather()
-//        startMarker.title = it.temp + " " + it.description
-
-
 
         mMap.setOnMapLongClickListener {
             val lat = it.latitude
             val lon = it.longitude
-            mMap.addMarker(MarkerOptions().position(LatLng(lat,lon)))
+            mMap.addMarker(MarkerOptions().position(LatLng(lat, lon)))
         }
 
-        mMap.setOnMarkerClickListener{
+        mMap.setOnMarkerClickListener {
             onMarkerClick(it)
         }
     }
 
-    private fun onMarkerClick(marker: Marker):Boolean{
-       lifecycleScope.launch{
-           loadData(marker.position.latitude,marker.position.longitude)
-           marker.title = "Загрузка данных"
-           marker.snippet="."
-           marker.showInfoWindow()
-           delay(1000)
-           marker.hideInfoWindow()
+    private fun onMarkerClick(marker: Marker): Boolean {
+        lifecycleScope.launch {
+            loadData(marker.position.latitude, marker.position.longitude)
+            marker.title = "Загрузка данных"
+            marker.snippet = "."
+            marker.showInfoWindow()
+            delay(1000)
+            marker.hideInfoWindow()
 
-           marker.title = "Загрузка данных"
-           marker.snippet=".."
-           marker.showInfoWindow()
-           delay(1000)
-           marker.hideInfoWindow()
+            marker.title = "Загрузка данных"
+            marker.snippet = ".."
+            marker.showInfoWindow()
+            delay(1000)
+            marker.hideInfoWindow()
 
-           marker.title = "Загрузка данных"
-           marker.snippet="..."
-           marker.showInfoWindow()
-           delay(1000)
+            marker.title = "Загрузка данных"
+            marker.snippet = "..."
+            marker.showInfoWindow()
+            delay(1000)
 
-           marker.hideInfoWindow()
-           val it = mapViewModel.getCurrentWeather()
-           //mapViewModel.currentWeatherDto.observe(viewLifecycleOwner){
-               marker.title = it.temp
-           marker.snippet = it.description
-           //}
-           marker.showInfoWindow()
+            marker.hideInfoWindow()
+            val it = mapViewModel.getCurrentWeather()
+            //mapViewModel.currentWeatherDto.observe(viewLifecycleOwner){
+            marker.title = it.temp
+            marker.snippet = it.description
+            //}
+            marker.showInfoWindow()
         }
-        return true
+        return true // if true - cancel standard actions and complete code of onMarkerClick()
     }
+
     private fun loadData(lat: Double, lon: Double) {
         mapViewModel.getWeather(
             lat,
@@ -158,42 +157,47 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             WeatherApp.LANG
         )
     }
+
     private fun getCurrentLocation(): LatLng {
         val context = requireContext()
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        val location = if (ActivityCompat.checkSelfPermission(
+        if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                1
-            )
-            return LatLng(0.0, 0.0)
+            locationPermissionsIsGranted = true
+            val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
+            val lat = location?.latitude ?: 0.0
+            val lon = location?.longitude ?: 0.0
+
+            return LatLng(lat, lon)
+
         } else {
-            locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
+            locationPermissionsIsGranted = false
+            Toast.makeText(requireContext(), "Location permission denied!", Toast.LENGTH_SHORT)
+                .show()
+            requestLocationPermission()
+            return LatLng(0.0, 0.0)
         }
+    }
 
-        val lat = location?.latitude
-        val lon = location?.longitude
+    private fun requestLocationPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            LOCATION_PERMISSION_RC
+        )
+    }
 
-        currentLocation = LatLng(lat ?: 0.0, lon ?: 0.0)
-        return currentLocation
+    companion object {
+        const val LOCATION_PERMISSION_RC = 100
     }
 }
