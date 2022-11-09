@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.testretrofitapp.domain.CurrentWeatherEntity
 import com.example.testretrofitapp.domain.GetCurrentWeatherUseCase
 import com.example.testretrofitapp.domain.LoadDataUseCase
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,9 +16,9 @@ class MapViewModel @Inject constructor(
     private val loadDataUseCase: LoadDataUseCase
 ) : ViewModel() {
 
-    private val _currentWeatherDto = MutableLiveData<CurrentWeatherEntity>()
+    private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity>()
     val currentWeatherDto: LiveData<CurrentWeatherEntity>
-        get() = _currentWeatherDto
+        get() = _currentWeatherEntity
 
     fun getCurrentWeather(): CurrentWeatherEntity {
         return currentWeatherDto.value ?: throw RuntimeException("Data not exist")
@@ -29,7 +30,7 @@ class MapViewModel @Inject constructor(
 
 fun getLiveData(){
     viewModelScope.launch {
-        _currentWeatherDto.value = getCurrentWeatherUseCase.invoke()
+        _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
     }
 }
 
@@ -43,8 +44,7 @@ fun getLiveData(){
     ) {
         viewModelScope.launch {
             loadDataUseCase.invoke(lat, lon, exclude, appid, units, lang)
-            _currentWeatherDto.value = getCurrentWeatherUseCase.invoke()
-
+            _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
         }
     }
 }

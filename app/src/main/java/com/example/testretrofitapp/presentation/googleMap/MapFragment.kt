@@ -117,31 +117,29 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun onMarkerClick(marker: Marker): Boolean {
-        lifecycleScope.launch {
+
+        val jobLoad = lifecycleScope.launch {
+            val firstData = mapViewModel.getCurrentWeather()
             loadData(marker.position.latitude, marker.position.longitude)
             marker.title = "Загрузка данных"
-            marker.snippet = "."
+            marker.snippet = "пожалуйста подождите"
             marker.showInfoWindow()
-            delay(1000)
-            marker.hideInfoWindow()
 
-            marker.title = "Загрузка данных"
-            marker.snippet = ".."
-            marker.showInfoWindow()
+            //delay while loading new data
             delay(1000)
-            marker.hideInfoWindow()
+            var secondData = mapViewModel.getCurrentWeather()
+            while (firstData == secondData) {
+                secondData = mapViewModel.getCurrentWeather()
+                delay(500)
+            }
+        }
 
-            marker.title = "Загрузка данных"
-            marker.snippet = "..."
-            marker.showInfoWindow()
-            delay(1000)
-
+        lifecycleScope.launch {
+            jobLoad.join()
             marker.hideInfoWindow()
             val it = mapViewModel.getCurrentWeather()
-            //mapViewModel.currentWeatherDto.observe(viewLifecycleOwner){
             marker.title = it.temp
             marker.snippet = it.description
-            //}
             marker.showInfoWindow()
         }
         return true // if true - cancel standard actions and complete code of onMarkerClick()
