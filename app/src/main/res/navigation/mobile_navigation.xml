@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/navigation_current_weather"
-        android:name="com.example.testretrofitapp.presentation.currentWeather.OverviewFragment"
+        android:name="com.example.myweatherapp.presentation.currentWeather.OverviewFragment"
         android:label="@string/title_current_weather" />
 
     <fragment
         android:id="@+id/navigation_week_forecast"
-        android:name="com.example.testretrofitapp.presentation.weekForecast.WeekForecastFragment"
+        android:name="com.example.myweatherapp.presentation.weekForecast.WeekForecastFragment"
         android:label="@string/title_week_forecast"
         tools:layout="@layout/fragment_week_forecast" />
 
     <fragment
         android:id="@+id/navigation_map_fragment"
-        android:name="com.example.testretrofitapp.presentation.googleMap.MapFragment"
+        android:name="com.example.myweatherapp.presentation.googleMap.MapFragment"
         android:label="@string/title_map_fragment" />
 </navigation>
