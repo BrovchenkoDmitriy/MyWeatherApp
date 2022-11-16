@@ -12,18 +12,12 @@ import com.example.myweatherapp.domain.WeatherForecastRepository
 import javax.inject.Inject
 
 class WeatherForecastRepositoryImpl @Inject constructor(
-    //private val application: Application,
     private val mapper: WeatherListMapper,
     private val currentWeatherDao: CurrentWeatherDao,
     private val dailyWeatherDao: DailyWeatherDao,
     private val hourlyWeatherDao: HourlyWeatherDao,
     private val apiService: OpenWeatherAPi
 ) : WeatherForecastRepository {
-//    private val db = AppDataBase.getInstance(application)
-//    private val currentWeatherDao = db.currentWeatherDao()
-//    private val dailyWeatherDao = db.dailyWeatherDao()
-//    private val hourlyWeatherDao = db.hourlyWeatherDao()
-//    private val apiService = WeatherApi.retrofitService
 
     override suspend fun getCurrentWeather(): CurrentWeatherEntity {
         val currentWeatherDbModel = currentWeatherDao.getWeatherDbModel()
@@ -51,8 +45,6 @@ class WeatherForecastRepositoryImpl @Inject constructor(
 
         try {
             Log.d("TAGA", "try make retrofit")
-        //      val weatherDto = getData(lat, lon, exclude, appid, units, lang)
-
             val weatherDto = apiService.getWeather(lat, lon, exclude, appid, units, lang)
             Log.d("TAGA", weatherDto.currentDto.temp)
             Log.d("TAGA", weatherDto.toString())

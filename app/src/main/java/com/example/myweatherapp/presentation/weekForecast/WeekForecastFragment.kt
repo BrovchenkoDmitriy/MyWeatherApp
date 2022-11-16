@@ -54,7 +54,7 @@ class WeekForecastFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getWeather()
+        viewModel.uploadWeekWeather()
     }
 
     override fun onDestroy() {

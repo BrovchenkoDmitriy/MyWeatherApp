@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_current_weather"
-        android:name="com.example.myweatherapp.presentation.currentWeather.OverviewFragment"
+        android:name="com.example.myweatherapp.presentation.currentWeather.MainWeatherFragment"
         android:label="@string/title_current_weather" />
 
     <fragment

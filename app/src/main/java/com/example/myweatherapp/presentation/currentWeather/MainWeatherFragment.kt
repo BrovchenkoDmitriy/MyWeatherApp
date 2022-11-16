@@ -15,18 +15,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.myweatherapp.R
 import com.example.myweatherapp.WeatherApp
-import com.example.myweatherapp.databinding.FragmentOverviewBinding
+import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.weekForecast.weekForecastRecyclerView.WeatherWeekAdapter
 import java.util.*
 import javax.inject.Inject
 
+class MainWeatherFragment : Fragment() {
 
-class OverviewFragment : Fragment() {
-
-    private var _binding: FragmentOverviewBinding? = null
-    private val binding: FragmentOverviewBinding
+    private var _binding: FragmentMainWeatherBinding? = null
+    private val binding: FragmentMainWeatherBinding
         get() = _binding ?: throw RuntimeException("FragmentOverviewBinding is null")
 
     private lateinit var weatherAdapter: WeatherWeekAdapter
@@ -42,8 +41,8 @@ class OverviewFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProvider(
             this,
-           viewModelFactory
-        )[OverViewModel::class.java]
+            viewModelFactory
+        )[MainWeatherViewModel::class.java]
     }
 
     override fun onAttach(context: Context) {
@@ -55,7 +54,7 @@ class OverviewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentOverviewBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentMainWeatherBinding.inflate(layoutInflater, container, false)
         Log.d("TAG", "onCreateView")
         return binding.root
     }
@@ -70,29 +69,36 @@ class OverviewFragment : Fragment() {
         Log.d("TAG", "onViewCreated")
         val lat = 50.2997427
         val lon = 127.5023826
- //       val url = "lat=$lat&lon=$lon&exclude=minutely,alerts&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru"
-        viewModel.getWeather(lat, lon, WeatherApp.EXCLUDE, WeatherApp.APPID, WeatherApp.UNITS, WeatherApp.LANG)
+        viewModel.getWeather(
+            lat,
+            lon,
+            WeatherApp.EXCLUDE,
+            WeatherApp.APPID,
+            WeatherApp.UNITS,
+            WeatherApp.LANG
+        )
         setupRecyclerView()
         initData()
         binding.loadWeatherButton.setOnClickListener {
-//            val lat = 50.2997427
-//            val lon = 127.5023826
-          //  val url = "lat=$lat&lon=$lon&exclude=minutely,alerts&appid=2e566c90702a14d162799e5be40e0a12&units=metric&lang=ru"
-            viewModel.getWeather(lat, lon, WeatherApp.EXCLUDE, WeatherApp.APPID, WeatherApp.UNITS, WeatherApp.LANG)
+            viewModel.getWeather(
+                lat,
+                lon,
+                WeatherApp.EXCLUDE,
+                WeatherApp.APPID,
+                WeatherApp.UNITS,
+                WeatherApp.LANG
+            )
             initData()
         }
     }
 
     private fun initData() {
-//        viewModel.status.observe(viewLifecycleOwner) {
-//            println(it)
-//        }
         Log.d("TAG", "startInitData")
         viewModel.currentWeatherEntity.observe(viewLifecycleOwner) {
             it?.let {
                 val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
                 val currentTime = System.currentTimeMillis()
-                val currentTimeString = format.format(currentTime).toString() + "\n"+it.dt
+                val currentTimeString = format.format(currentTime).toString() + "\n" + it.dt
                 val feelLikeTemp = "Ощущается как " + it.feelsLike
                 with(binding) {
                     bindImage(ivWeatherIcon, it.icon)
@@ -108,14 +114,10 @@ class OverviewFragment : Fragment() {
         }
         viewModel.hourlyWeatherEntity.observe(viewLifecycleOwner) {
             hourlyWeatherAdapter.submitList(it)
-            //            for(i in it){
-//                Log.d("TAG", i.dt)
-//            }
-//            Log.d("TAG", it.size.toString())
         }
         binding.clCurrentWeather.setOnClickListener {
-            with(binding.rvHourlyWeather){
-                visibility = if(visibility == View.GONE) View.VISIBLE
+            with(binding.rvHourlyWeather) {
+                visibility = if (visibility == View.GONE) View.VISIBLE
                 else View.GONE
             }
         }
