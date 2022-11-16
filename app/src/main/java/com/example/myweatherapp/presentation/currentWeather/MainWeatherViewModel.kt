@@ -9,10 +9,10 @@ import com.example.myweatherapp.domain.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class OverViewModel @Inject constructor(private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-                                        private val getWeekWeatherUseCase: GetWeekWeatherUseCase,
-                                        private val getHourlyWeatherUseCase: GeHourlyWeatherUseCase,
-                                        private val loadDataUseCase: LoadDataUseCase)
+class MainWeatherViewModel @Inject constructor(private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
+                                               private val getWeekWeatherUseCase: GetWeekWeatherUseCase,
+                                               private val getHourlyWeatherUseCase: GeHourlyWeatherUseCase,
+                                               private val loadDataUseCase: LoadDataUseCase)
                     : ViewModel() {
 
     private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity>()

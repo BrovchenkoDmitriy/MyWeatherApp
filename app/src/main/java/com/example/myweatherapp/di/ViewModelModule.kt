@@ -1,7 +1,7 @@
 package com.example.myweatherapp.di
 
 import androidx.lifecycle.ViewModel
-import com.example.myweatherapp.presentation.currentWeather.OverViewModel
+import com.example.myweatherapp.presentation.currentWeather.MainWeatherViewModel
 import com.example.myweatherapp.presentation.googleMap.MapViewModel
 import com.example.myweatherapp.presentation.weekForecast.WeekForecastViewModel
 import dagger.Binds
@@ -13,8 +13,8 @@ interface ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(OverViewModel::class)
-    fun bindOverViewModel(viewModel: OverViewModel):ViewModel
+    @ViewModelKey(MainWeatherViewModel::class)
+    fun bindMainWeatherViewModel(viewModel: MainWeatherViewModel):ViewModel
 
     @Binds
     @IntoMap

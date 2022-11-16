@@ -23,11 +23,7 @@ class MapViewModel @Inject constructor(
         return currentWeatherDto.value ?: throw RuntimeException("Data not exist")
     }
 
-//     init{
-//   getLiveData()
-//      }
-
-fun getLiveData(){
+fun uploadCurrentWeather(){
     viewModelScope.launch {
         _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
     }

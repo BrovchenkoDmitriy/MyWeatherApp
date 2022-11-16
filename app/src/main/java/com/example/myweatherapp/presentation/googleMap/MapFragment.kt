@@ -76,14 +76,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
         requestLocationPermission()
         currentLocation = getCurrentLocation()
-        //loadData(currentLocation.latitude,currentLocation.longitude)
     }
 
     override fun onResume() {
         super.onResume()
-        mapViewModel.getLiveData()
+        mapViewModel.uploadCurrentWeather()
     }
-
 
     override fun onMapReady(googleMap: GoogleMap) {
 
