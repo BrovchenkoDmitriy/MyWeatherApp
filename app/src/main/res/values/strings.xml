@@ -10,4 +10,5 @@
     <string name="title_current_weather">Сегодня</string>
     <string name="title_week_forecast">Неделя</string>
     <string name="title_map_fragment">Карта</string>
+    <string name="pop">80%</string>
 </resources>

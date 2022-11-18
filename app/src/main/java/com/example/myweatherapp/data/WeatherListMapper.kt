@@ -144,7 +144,7 @@ class WeatherListMapper @Inject constructor() {
             windDeg = dailyWeatherDbModel.windDeg,
             description = dailyWeatherDbModel.description,
             icon = dailyWeatherDbModel.icon,
-            pop = dailyWeatherDbModel.pop
+            pop = ((dailyWeatherDbModel.pop).toDouble()*1000).toInt()/10
         )
     }
 

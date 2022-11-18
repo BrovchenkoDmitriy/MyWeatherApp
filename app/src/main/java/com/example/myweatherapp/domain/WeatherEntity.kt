@@ -28,7 +28,7 @@ data class DailyWeatherEntity(
     val windDeg: String,
     val description: String,
     val icon: String,
-    val pop: String
+    val pop: Int
 )
 
 data class HourlyWeatherEntity(
