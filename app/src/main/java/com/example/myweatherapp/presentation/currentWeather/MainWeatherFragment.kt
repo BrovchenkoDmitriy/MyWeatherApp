@@ -94,12 +94,19 @@ class MainWeatherFragment : Fragment() {
 
     private fun initData() {
         Log.d("TAG", "startInitData")
+        binding.clCurrentWeather.visibility = View.GONE
+        binding.rvFurtherWeek.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
         viewModel.currentWeatherEntity.observe(viewLifecycleOwner) {
             it?.let {
                 val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
                 val currentTime = System.currentTimeMillis()
                 val currentTimeString = format.format(currentTime).toString() + "\n" + it.dt
                 val feelLikeTemp = "Ощущается как " + it.feelsLike
+                binding.progressBar.visibility = View.GONE
+                binding.clCurrentWeather.visibility = View.VISIBLE
+                binding.rvFurtherWeek.visibility = View.VISIBLE
+
                 with(binding) {
                     bindImage(ivWeatherIcon, it.icon)
                     tvDescription.text = it.description
