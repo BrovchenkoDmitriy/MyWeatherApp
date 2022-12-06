@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/subWhite"
+    android:gravity="center_vertical"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
@@ -103,23 +104,31 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="12dp"
-    android:elevation="4dp"
-    android:padding="16dp"
-    app:cardUseCompatPadding="true"
-    >
-    <androidx.recyclerview.widget.RecyclerView
-        android:background="@color/white"
-        android:id="@+id/rv_hourly_weather"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:listitem="@layout/hourly_weather_item" />
-</androidx.cardview.widget.CardView>
 
+
+        />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:padding="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardUseCompatPadding="true">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_hourly_weather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:visibility="gone"
+            tools:listitem="@layout/hourly_weather_item" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_further_week"
