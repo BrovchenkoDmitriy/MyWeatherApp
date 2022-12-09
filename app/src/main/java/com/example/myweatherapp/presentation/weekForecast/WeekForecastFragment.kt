@@ -3,17 +3,20 @@ package com.example.myweatherapp.presentation.weekForecast
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
 import com.example.myweatherapp.WeatherApp
 import com.example.myweatherapp.databinding.FragmentWeekForecastBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.weekForecast.weekForecastRecyclerView.WeatherWeekAdapter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 class WeekForecastFragment : Fragment() {
@@ -52,11 +55,6 @@ class WeekForecastFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.uploadWeekWeather()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
@@ -64,20 +62,26 @@ class WeekForecastFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.clearLiveData()
+        viewModel.updateData()
         setupRecyclerView()
-        viewModel.weekWeatherDto.observe(viewLifecycleOwner){
+
+        lifecycleScope.launch {
+            delay(Random.nextLong(500, 1000))
+            binding.pbLoadWeekWeather.visibility = View.GONE
+            binding.rvFurtherWeek.visibility = View.VISIBLE
+        }
+
+        viewModel.weekWeather.observe(viewLifecycleOwner) {
             weatherAdapter.submitList(it)
         }
     }
 
     private fun setupRecyclerView() {
         Log.d("TAG", "setupRecyclerView")
+        weatherAdapter = WeatherWeekAdapter()
         with(binding.rvFurtherWeek) {
-            layoutManager = LinearLayoutManager(activity)
-            weatherAdapter = WeatherWeekAdapter()
             adapter = weatherAdapter
         }
     }
-
-
 }

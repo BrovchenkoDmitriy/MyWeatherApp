@@ -26,7 +26,13 @@ class WeatherForecastRepositoryImpl @Inject constructor(
 
     override suspend fun getWeekWeather(): List<DailyWeatherEntity> {
         val listOfDailyWeatherDbModel = dailyWeatherDao.getWeatherWeek()
-        return mapper.mapDailyDbModelListToDailyEntityList(listOfDailyWeatherDbModel)
+
+        //if i will use in fun of DAO interface LiveData<List<...>>  instead of List<...>
+//        return Transformations.map(listOfDailyWeatherDbModel){
+//            mapper.mapDailyDbModelListToDailyEntityList(it)
+//        }
+
+       return  mapper.mapDailyDbModelListToDailyEntityList(listOfDailyWeatherDbModel)
     }
 
     override suspend fun getHourlyWeather(): List<HourlyWeatherEntity> {
