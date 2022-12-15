@@ -8,6 +8,7 @@
     <fragment
         android:id="@+id/navigation_current_weather"
         android:name="com.example.myweatherapp.presentation.currentWeather.MainWeatherFragment"
+        tools:layout="@layout/fragment_main_weather"
         android:label="@string/title_current_weather" />
 
     <fragment
@@ -19,5 +20,6 @@
     <fragment
         android:id="@+id/navigation_map_fragment"
         android:name="com.example.myweatherapp.presentation.googleMap.MapFragment"
+        tools:layout="@layout/fragment_map"
         android:label="@string/title_map_fragment" />
 </navigation>
