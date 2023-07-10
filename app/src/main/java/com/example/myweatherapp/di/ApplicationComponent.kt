@@ -6,9 +6,11 @@ import com.example.myweatherapp.presentation.googleMap.MapFragment
 import com.example.myweatherapp.presentation.weekForecast.WeekForecastFragment
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
 @ApplicationScope
-@Component(modules = [DataModule::class, ViewModelModule::class])
+@Component(modules = [DataModule::class, ViewModelModule::class, DomainModule::class])
+@Singleton
 interface ApplicationComponent {
 
     fun inject(fragment: MainWeatherFragment)
