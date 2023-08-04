@@ -71,14 +71,17 @@ class MainWeatherFragment : Fragment() {
         Log.d("TAG", "onViewCreated")
         val lat = 50.2997427
         val lon = 127.5023826
+        val city = "Благо"
         viewModel.clearLiveData()
         getWeather(lat, lon)
         setupRecyclerView()
         initData()
 
         binding.loadWeatherButton.setOnClickListener {
+           searchCities(city)
             getWeather(lat, lon)
             initData()
+
         }
     }
 
@@ -90,6 +93,14 @@ class MainWeatherFragment : Fragment() {
             WeatherApp.APPID,
             WeatherApp.UNITS,
             WeatherApp.LANG
+        )
+    }
+    private fun searchCities(query:String){
+        viewModel.searchCities(
+            query,
+            WeatherApp.PLACE_TYPE,
+            WeatherApp.SESSION_TOKEN,
+            WeatherApp.ACCESS_TOKEN
         )
     }
 

@@ -4,8 +4,7 @@ import com.squareup.moshi.Json
 
 data class SearchedCitiesDto (
     val suggestions: List<Suggestion>,
-    val attribution: String,
-    val url: String
+    val attribution: String
 )
 
 data class Suggestion (
@@ -15,5 +14,5 @@ data class Suggestion (
     val namePreferred: String,
 
     @Json(name = "place_formatted")
-    val placeFormatted: String,
+    val placeFormatted: String
 )
