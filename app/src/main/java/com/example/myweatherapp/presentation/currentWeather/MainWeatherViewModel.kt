@@ -1,5 +1,6 @@
 package com.example.myweatherapp.presentation.currentWeather
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +13,8 @@ class MainWeatherViewModel @Inject constructor(
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
     private val getWeekWeatherUseCase: GetWeekWeatherUseCase,
     private val getHourlyWeatherUseCase: GeHourlyWeatherUseCase,
-    private val loadDataUseCase: LoadDataUseCase
+    private val loadDataUseCase: LoadDataUseCase,
+    private val getSearchedCitiesUseCase: GetSearchedCitiesUseCase
 ) : ViewModel() {
 
     private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity>()
@@ -27,6 +29,8 @@ class MainWeatherViewModel @Inject constructor(
     val hourlyWeatherEntity: LiveData<List<HourlyWeatherEntity>>
         get() = _hourlyWeatherEntity
 
+    private val _searchedCities = MutableLiveData<List<SearchedCities>>()
+    val searchedCities:LiveData<List<SearchedCities>> = _searchedCities
 
     fun clearLiveData() {
         _currentWeatherEntity.value = null
@@ -47,6 +51,19 @@ class MainWeatherViewModel @Inject constructor(
             _weekWeatherEntity.value = getWeekWeatherUseCase.invoke()
             _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
             _hourlyWeatherEntity.value = getHourlyWeatherUseCase.invoke()
+        }
+    }
+
+    fun searchCities(
+        query: String,
+        types: String,
+        sessionToken: String,
+        accessToken: String
+    ){
+        viewModelScope.launch {
+            val result = getSearchedCitiesUseCase.invoke(query, types, sessionToken, accessToken)
+            _searchedCities.value = result
+            Log.d("SEARCH_CITIES", result.toString())
         }
     }
 }
