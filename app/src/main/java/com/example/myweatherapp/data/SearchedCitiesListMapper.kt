@@ -12,14 +12,14 @@ class SearchedCitiesListMapper @Inject constructor() {
             unrestrictedValue = suggestion.unrestrictedValue,
 
             postalCode = suggestion.data.postalCode,
-            country = suggestion.data.country,
+            country = suggestion.data.country?:"",
             countryISOCode = suggestion.data.countryISOCode?:"",
             federalDistrict = suggestion.data.federalDistrict?:"",
             regionISOCode = suggestion.data.regionISOCode?:"",
-            regionWithType = suggestion.data.regionWithType,
-            regionType = suggestion.data.regionType,
-            regionTypeFull = suggestion.data.regionTypeFull,
-            region = suggestion.data.region,
+            regionWithType = suggestion.data.regionWithType?:"",
+            regionType = suggestion.data.regionType?:"",
+            regionTypeFull = suggestion.data.regionTypeFull?:"",
+            region = suggestion.data.region?:"",
             cityWithType = suggestion.data.cityWithType?:"",
             city = suggestion.data.city?:"",
             cityArea = suggestion.data.cityArea,
@@ -31,5 +31,5 @@ class SearchedCitiesListMapper @Inject constructor() {
 
     fun mapDtoListToEntityList(list: List<Suggestion>): List<SearchedCities> = list.map {
         mapSearchedCitiesDtoToSearchedCities(it)
-    }.filter { it.street==null && it.geoLat.isNotEmpty() }
+    }//.filter { it.street==null && it.geoLat.isNotEmpty() }
 }
