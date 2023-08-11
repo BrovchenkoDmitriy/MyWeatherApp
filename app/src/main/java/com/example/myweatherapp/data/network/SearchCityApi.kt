@@ -1,29 +1,30 @@
 package com.example.myweatherapp.data.network
 
+import com.example.myweatherapp.BuildConfig
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.Query
 import javax.inject.Inject
 
 interface SearchCityApi {
-    @GET("suggest")
+    @Headers(
+        "Content-type: application/json",
+        "Accept: application/json",
+        "Authorization: Token ${BuildConfig.DADATA_API_KEY}"
+    )
+    @GET("address")
     suspend fun getSearchedCitiesList(
-        @Query("q") query: String,
-        @Query("types") types:String,
-        @Query("session_token") sessionToken:String,
-        @Query("access_token") accessToken:String
+        @Query("query") query: String
     ):SearchedCitiesDto
 }
 
 class SearchCityApiImpl @Inject constructor(
     private val searchCityApi: SearchCityApi
-): SearchCityApi {
+) : SearchCityApi {
     override suspend fun getSearchedCitiesList(
-        query: String,
-        types: String,
-        sessionToken: String,
-        accessToken: String
+        query: String
     ): SearchedCitiesDto {
-        return searchCityApi.getSearchedCitiesList(query,types,sessionToken,accessToken)
+        return searchCityApi.getSearchedCitiesList(query)
     }
 
 }

@@ -11,16 +11,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.net.toUri
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.example.myweatherapp.BuildConfig
 import com.example.myweatherapp.R
 import com.example.myweatherapp.WeatherApp
 import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
+import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
 import com.example.myweatherapp.presentation.weekForecast.weekForecastRecyclerView.WeatherWeekAdapter
+import kotlinx.coroutines.delay
 import java.util.*
 import javax.inject.Inject
 
@@ -30,7 +35,7 @@ class MainWeatherFragment : Fragment() {
     private val binding: FragmentMainWeatherBinding
         get() = _binding ?: throw RuntimeException("FragmentOverviewBinding is null")
 
-    private lateinit var weatherAdapter: WeatherWeekAdapter
+    private lateinit var searchedCitiesAdapter: SearchedCitiesAdapter
     private lateinit var hourlyWeatherAdapter: HourlyWeatherAdapter
 
     @Inject
@@ -71,17 +76,26 @@ class MainWeatherFragment : Fragment() {
         Log.d("TAG", "onViewCreated")
         val lat = 50.2997427
         val lon = 127.5023826
-        val city = "Благо"
+        val city = "Благов"
         viewModel.clearLiveData()
         getWeather(lat, lon)
         setupRecyclerView()
         initData()
 
         binding.loadWeatherButton.setOnClickListener {
-           searchCities(city)
-            getWeather(lat, lon)
-            initData()
+            searchCities(city)
+//            getWeather(lat, lon)
+//            initData()
 
+        }
+
+        binding.etSearchCity.addTextChangedListener {
+            it?.let {
+                lifecycleScope.launchWhenResumed {
+//                    delay(1000)
+                    searchCities(it.toString())
+                }
+            }
         }
     }
 
@@ -90,17 +104,18 @@ class MainWeatherFragment : Fragment() {
             lat,
             lon,
             WeatherApp.EXCLUDE,
-            WeatherApp.APPID,
+            BuildConfig.OPEN_WEATHER_API_KEY,
             WeatherApp.UNITS,
             WeatherApp.LANG
         )
     }
-    private fun searchCities(query:String){
+
+    private fun searchCities(query: String) {
         viewModel.searchCities(
-            query,
-            WeatherApp.PLACE_TYPE,
-            WeatherApp.SESSION_TOKEN,
-            WeatherApp.ACCESS_TOKEN
+            query
+//            WeatherApp.PLACE_TYPE,
+//            WeatherApp.SESSION_TOKEN,
+//            WeatherApp.ACCESS_TOKEN
         )
     }
 
@@ -123,8 +138,8 @@ class MainWeatherFragment : Fragment() {
                 crossFadeAnimation()
             }
         }
-        viewModel.weekWeatherEntity.observe(viewLifecycleOwner) {
-            weatherAdapter.submitList(it)
+        viewModel.searchedCities.observe(viewLifecycleOwner) {
+            searchedCitiesAdapter.submitList(it)
         }
         viewModel.hourlyWeatherEntity.observe(viewLifecycleOwner) {
             hourlyWeatherAdapter.submitList(it)
@@ -137,7 +152,7 @@ class MainWeatherFragment : Fragment() {
         }
     }
 
-    private fun crossFadeAnimation(){
+    private fun crossFadeAnimation() {
         val shortAnimationDuration = resources.getInteger(android.R.integer.config_longAnimTime)
         binding.progressBar.visibility = View.GONE
         binding.clCurrentWeather.visibility = View.VISIBLE
@@ -194,8 +209,16 @@ class MainWeatherFragment : Fragment() {
         Log.d("TAG", "setupRecyclerView")
         with(binding.rvFurtherWeek) {
             layoutManager = LinearLayoutManager(activity)
-            weatherAdapter = WeatherWeekAdapter()
-            adapter = weatherAdapter
+            searchedCitiesAdapter = SearchedCitiesAdapter()
+            adapter = searchedCitiesAdapter
+            searchedCitiesAdapter.onItemClickListener = {
+                binding.etSearchCity.text.clear()
+                binding.etSearchCity.hint = it.unrestrictedValue
+                searchCities("")
+
+
+
+            }
         }
         with(binding.rvHourlyWeather) {
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)

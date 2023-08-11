@@ -11,4 +11,5 @@
     <string name="title_week_forecast">Неделя</string>
     <string name="title_map_fragment">Карта</string>
     <string name="pop">80%</string>
+    <string name="enter_city_name">Введите название города...</string>
 </resources>

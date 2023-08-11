@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.myweatherapp.BuildConfig
 import com.example.myweatherapp.R
 import com.example.myweatherapp.WeatherApp
 import com.example.myweatherapp.databinding.FragmentMapBinding
@@ -148,7 +149,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             lat,
             lon,
             WeatherApp.EXCLUDE,
-            WeatherApp.APPID,
+            BuildConfig.OPEN_WEATHER_API_KEY,
             WeatherApp.UNITS,
             WeatherApp.LANG
         )

@@ -56,14 +56,14 @@ class MainWeatherViewModel @Inject constructor(
 
     fun searchCities(
         query: String,
-        types: String,
-        sessionToken: String,
-        accessToken: String
+//        types: String,
+//        sessionToken: String,
+//        accessToken: String
     ){
         viewModelScope.launch {
-            val result = getSearchedCitiesUseCase.invoke(query, types, sessionToken, accessToken)
+            val result = getSearchedCitiesUseCase.invoke(query)
             _searchedCities.value = result
-            Log.d("SEARCH_CITIES", result.toString())
+            Log.d("SEARCH_CITIES", "ViewModel: "+ result.toString())
         }
     }
 }
