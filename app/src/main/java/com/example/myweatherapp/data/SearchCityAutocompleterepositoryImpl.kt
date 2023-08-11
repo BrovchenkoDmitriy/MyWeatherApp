@@ -12,13 +12,11 @@ class SearchCityAutocompleteRepositoryImpl @Inject constructor(
 ): SearchCityAutocompleteRepository {
     override suspend fun getSearchedCities(
         query: String,
-        types: String,
-        sessionToken: String,
-        accessToken: String
     ): List<SearchedCities>
     {
         return try {
-            val searchedCitiesDto = searchCityApi.getSearchedCitiesList(query,types,sessionToken,accessToken)
+            val searchedCitiesDto = searchCityApi.getSearchedCitiesList(query)
+            Log.d("SEARCH_CITIES", "RepoImpl:  "+searchedCitiesDto.suggestions.toString())
             mapper.mapDtoListToEntityList(searchedCitiesDto.suggestions).toList()
         } catch (e: Exception) {
             Log.d("TAG", e.stackTraceToString())

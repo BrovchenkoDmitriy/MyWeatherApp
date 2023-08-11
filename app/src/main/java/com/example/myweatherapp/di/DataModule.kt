@@ -50,21 +50,16 @@ class DataModule {
     fun provideApiService(moshi: Moshi): OpenWeatherAPi {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .baseUrl("https://api.mapbox.com/search/searchbox/v1/")
+            .baseUrl("http://api.openweathermap.org/data/2.5/")
             .build().create(OpenWeatherAPi::class.java)
     }
-
-//    @Provides
-//    fun provideSearchCityUrl(): String = "https://api.mapbox.com/search/searchbox/v1/"
-
-
 
     @Provides
     @Singleton
     fun provideSearchCityApiService(moshi:Moshi):SearchCityApi {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .baseUrl("https://api.mapbox.com/search/searchbox/v1/")
+            .baseUrl("https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/")
             .build().create(SearchCityApi::class.java)
     }
 
