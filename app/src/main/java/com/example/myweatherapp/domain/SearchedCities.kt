@@ -22,6 +22,6 @@ data class SearchedCities(
     val streetTypeFull: String? = null,
     val street: String? = null,
 
-    val geoLat: String,
-    val geoLon: String
+    val geoLat: Double,
+    val geoLon: Double
 )
