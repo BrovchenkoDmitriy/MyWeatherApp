@@ -24,9 +24,8 @@ import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
-import com.example.myweatherapp.presentation.weekForecast.weekForecastRecyclerView.WeatherWeekAdapter
 import kotlinx.coroutines.delay
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class MainWeatherFragment : Fragment() {
@@ -62,7 +61,6 @@ class MainWeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainWeatherBinding.inflate(layoutInflater, container, false)
-        Log.d("TAG", "onCreateView")
         return binding.root
     }
 
@@ -76,23 +74,15 @@ class MainWeatherFragment : Fragment() {
         Log.d("TAG", "onViewCreated")
         val lat = 50.2997427
         val lon = 127.5023826
-        val city = "Благов"
         viewModel.clearLiveData()
         getWeather(lat, lon)
         setupRecyclerView()
         initData()
 
-        binding.loadWeatherButton.setOnClickListener {
-            searchCities(city)
-//            getWeather(lat, lon)
-//            initData()
-
-        }
-
         binding.etSearchCity.addTextChangedListener {
             it?.let {
                 lifecycleScope.launchWhenResumed {
-//                    delay(1000)
+                    delay(1000)
                     searchCities(it.toString())
                 }
             }
@@ -111,12 +101,7 @@ class MainWeatherFragment : Fragment() {
     }
 
     private fun searchCities(query: String) {
-        viewModel.searchCities(
-            query
-//            WeatherApp.PLACE_TYPE,
-//            WeatherApp.SESSION_TOKEN,
-//            WeatherApp.ACCESS_TOKEN
-        )
+        viewModel.searchCities(query)
     }
 
     private fun initData() {
@@ -191,7 +176,6 @@ class MainWeatherFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                 }
             })
-
     }
 
     private fun bindImage(imgView: ImageView, icon: String) {
@@ -215,9 +199,7 @@ class MainWeatherFragment : Fragment() {
                 binding.etSearchCity.text.clear()
                 binding.etSearchCity.hint = it.unrestrictedValue
                 searchCities("")
-
-
-
+                getWeather(it.geoLat, it.geoLon)
             }
         }
         with(binding.rvHourlyWeather) {

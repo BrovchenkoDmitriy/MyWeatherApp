@@ -25,11 +25,11 @@ class SearchedCitiesListMapper @Inject constructor() {
             cityArea = suggestion.data.cityArea,
             streetTypeFull = suggestion.data.streetTypeFull,
             street = suggestion.data.street,
-            geoLat = suggestion.data.geoLat?:"",
-            geoLon = suggestion.data.geoLon?:""
+            geoLat = suggestion.data.geoLat?.toDouble()?:0.0,
+            geoLon = suggestion.data.geoLon?.toDouble()?:0.0
         )
 
     fun mapDtoListToEntityList(list: List<Suggestion>): List<SearchedCities> = list.map {
         mapSearchedCitiesDtoToSearchedCities(it)
-    }//.filter { it.street==null && it.geoLat.isNotEmpty() }
+    }
 }
