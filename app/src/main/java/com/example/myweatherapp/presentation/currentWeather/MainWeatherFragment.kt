@@ -4,13 +4,16 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.icu.text.SimpleDateFormat
+import android.inputmethodservice.InputMethodService
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.core.net.toUri
+import androidx.core.text.set
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -79,7 +82,7 @@ class MainWeatherFragment : Fragment() {
         setupRecyclerView()
         initData()
 
-        binding.etSearchCity.addTextChangedListener {
+        binding.etSearchCity1.addTextChangedListener {
             it?.let {
                 lifecycleScope.launchWhenResumed {
                     delay(1000)
@@ -196,10 +199,13 @@ class MainWeatherFragment : Fragment() {
             searchedCitiesAdapter = SearchedCitiesAdapter()
             adapter = searchedCitiesAdapter
             searchedCitiesAdapter.onItemClickListener = {
-                binding.etSearchCity.text.clear()
-                binding.etSearchCity.hint = it.unrestrictedValue
+                binding.etSearchCity1.text.clear()
+                binding.etSearchCity1.hint = it.unrestrictedValue
                 searchCities("")
                 getWeather(it.geoLat, it.geoLon)
+              // remove softKeyBoard after chose city
+                (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                    .hideSoftInputFromWindow(windowToken, 0)
             }
         }
         with(binding.rvHourlyWeather) {
@@ -208,4 +214,5 @@ class MainWeatherFragment : Fragment() {
             adapter = hourlyWeatherAdapter
         }
     }
+
 }
