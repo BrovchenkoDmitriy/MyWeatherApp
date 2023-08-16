@@ -82,7 +82,7 @@ class MainWeatherFragment : Fragment() {
         setupRecyclerView()
         initData()
 
-        binding.etSearchCity1.addTextChangedListener {
+        binding.etSearchCity.addTextChangedListener {
             it?.let {
                 lifecycleScope.launchWhenResumed {
                     delay(1000)
@@ -144,7 +144,7 @@ class MainWeatherFragment : Fragment() {
         val shortAnimationDuration = resources.getInteger(android.R.integer.config_longAnimTime)
         binding.progressBar.visibility = View.GONE
         binding.clCurrentWeather.visibility = View.VISIBLE
-        binding.rvFurtherWeek.visibility = View.VISIBLE
+//        binding.rvFurtherWeek.visibility = View.VISIBLE
         binding.clCurrentWeather.apply {
             // Set the content view to 0% opacity but visible, so that it is visible
             // (but fully transparent) during the animation.
@@ -158,7 +158,7 @@ class MainWeatherFragment : Fragment() {
                 .setDuration(shortAnimationDuration.toLong())
                 .setListener(null)
         }
-        binding.rvFurtherWeek.apply {
+        binding.rvSearchCity.apply {
             alpha = 0f
             visibility = View.VISIBLE
 
@@ -194,13 +194,14 @@ class MainWeatherFragment : Fragment() {
 
     private fun setupRecyclerView() {
         Log.d("TAG", "setupRecyclerView")
-        with(binding.rvFurtherWeek) {
+        with(binding.rvSearchCity) {
             layoutManager = LinearLayoutManager(activity)
             searchedCitiesAdapter = SearchedCitiesAdapter()
             adapter = searchedCitiesAdapter
             searchedCitiesAdapter.onItemClickListener = {
-                binding.etSearchCity1.text.clear()
-                binding.etSearchCity1.hint = it.unrestrictedValue
+                binding.etSearchCity.text.clear()
+                binding.etSearchCity.clearFocus()
+                binding.loadWeatherButton.text = it.unrestrictedValue
                 searchCities("")
                 getWeather(it.geoLat, it.geoLon)
               // remove softKeyBoard after chose city
