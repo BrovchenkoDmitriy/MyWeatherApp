@@ -21,7 +21,8 @@
             android:value="AIzaSyAcgxCaZtTWNEN4_4m_SENmQHysHFf_GpE" />
         <activity
             android:name="com.example.myweatherapp.presentation.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
