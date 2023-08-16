@@ -69,6 +69,7 @@ class MainWeatherFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("TAG", "onDestroy")
         _binding = null
     }
 
@@ -201,7 +202,7 @@ class MainWeatherFragment : Fragment() {
             searchedCitiesAdapter.onItemClickListener = {
                 binding.etSearchCity.text.clear()
                 binding.etSearchCity.clearFocus()
-                binding.loadWeatherButton.text = it.unrestrictedValue
+                binding.loadWeatherButton.text = it.value
                 searchCities("")
                 getWeather(it.geoLat, it.geoLon)
               // remove softKeyBoard after chose city
