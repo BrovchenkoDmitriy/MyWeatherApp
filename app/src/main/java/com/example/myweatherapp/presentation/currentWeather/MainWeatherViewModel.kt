@@ -21,20 +21,15 @@ class MainWeatherViewModel @Inject constructor(
     val currentWeatherEntity: LiveData<CurrentWeatherEntity>
         get() = _currentWeatherEntity
 
-    private val _weekWeatherEntity = MutableLiveData<List<DailyWeatherEntity>>()
-    val weekWeatherEntity: LiveData<List<DailyWeatherEntity>>
-        get() = _weekWeatherEntity
-
     private val _hourlyWeatherEntity = MutableLiveData<List<HourlyWeatherEntity>>()
     val hourlyWeatherEntity: LiveData<List<HourlyWeatherEntity>>
         get() = _hourlyWeatherEntity
 
     private val _searchedCities = MutableLiveData<List<SearchedCities>>()
-    val searchedCities:LiveData<List<SearchedCities>> = _searchedCities
+    val searchedCities: LiveData<List<SearchedCities>> = _searchedCities
 
     fun clearLiveData() {
         _currentWeatherEntity.value = null
-        _weekWeatherEntity.value = null
         _hourlyWeatherEntity.value = null
     }
 
@@ -48,7 +43,6 @@ class MainWeatherViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             loadDataUseCase(lat, lon, exclude, appid, units, lang)
-            _weekWeatherEntity.value = getWeekWeatherUseCase.invoke()
             _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
             _hourlyWeatherEntity.value = getHourlyWeatherUseCase.invoke()
         }
@@ -56,11 +50,11 @@ class MainWeatherViewModel @Inject constructor(
 
     fun searchCities(
         query: String,
-    ){
+    ) {
         viewModelScope.launch {
             val result = getSearchedCitiesUseCase.invoke(query)
             _searchedCities.value = result
-            Log.d("SEARCH_CITIES", "ViewModel: "+ result.toString())
+            Log.d("SEARCH_CITIES", "ViewModel: " + result.toString())
         }
     }
 }
