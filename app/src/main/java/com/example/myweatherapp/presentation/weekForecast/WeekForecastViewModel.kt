@@ -18,7 +18,7 @@ class WeekForecastViewModel @Inject constructor(
         get() = _weekWeather
 
     fun clearLiveData() {
-        _weekWeather.value = null
+        _weekWeather.value = listOf()
     }
 
     fun updateData() {

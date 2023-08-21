@@ -11,6 +11,7 @@
         android:id="@+id/pb_loadWeekWeather"
         style="?android:attr/progressBarStyle"
         android:layout_gravity="center"
+        android:indeterminateTint="@color/subYellow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

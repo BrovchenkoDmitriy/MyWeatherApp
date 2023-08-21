@@ -1,24 +1,28 @@
 package com.example.myweatherapp.presentation.currentWeather
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myweatherapp.domain.*
+import com.example.myweatherapp.domain.CurrentWeatherEntity
+import com.example.myweatherapp.domain.GeHourlyWeatherUseCase
+import com.example.myweatherapp.domain.GetCurrentWeatherUseCase
+import com.example.myweatherapp.domain.GetSearchedCitiesUseCase
+import com.example.myweatherapp.domain.HourlyWeatherEntity
+import com.example.myweatherapp.domain.LoadDataUseCase
+import com.example.myweatherapp.domain.SearchedCities
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainWeatherViewModel @Inject constructor(
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-    private val getWeekWeatherUseCase: GetWeekWeatherUseCase,
     private val getHourlyWeatherUseCase: GeHourlyWeatherUseCase,
     private val loadDataUseCase: LoadDataUseCase,
     private val getSearchedCitiesUseCase: GetSearchedCitiesUseCase
 ) : ViewModel() {
 
-    private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity>()
-    val currentWeatherEntity: LiveData<CurrentWeatherEntity>
+    private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity?>()
+    val currentWeatherEntity: LiveData<CurrentWeatherEntity?>
         get() = _currentWeatherEntity
 
     private val _hourlyWeatherEntity = MutableLiveData<List<HourlyWeatherEntity>>()
@@ -30,7 +34,7 @@ class MainWeatherViewModel @Inject constructor(
 
     fun clearLiveData() {
         _currentWeatherEntity.value = null
-        _hourlyWeatherEntity.value = null
+        _hourlyWeatherEntity.value = listOf()
     }
 
     fun getWeather(
@@ -54,7 +58,6 @@ class MainWeatherViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getSearchedCitiesUseCase.invoke(query)
             _searchedCities.value = result
-            Log.d("SEARCH_CITIES", "ViewModel: " + result.toString())
         }
     }
 }
