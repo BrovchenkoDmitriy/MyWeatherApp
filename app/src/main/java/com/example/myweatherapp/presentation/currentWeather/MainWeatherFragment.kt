@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.icu.text.SimpleDateFormat
-import android.inputmethodservice.InputMethodService
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,12 +12,12 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.core.net.toUri
-import androidx.core.text.set
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import coil.load
 import com.example.myweatherapp.BuildConfig
 import com.example.myweatherapp.R
@@ -215,6 +214,8 @@ class MainWeatherFragment : Fragment() {
             hourlyWeatherAdapter = HourlyWeatherAdapter()
             adapter = hourlyWeatherAdapter
         }
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.rvHourlyWeather)
     }
 
 }
