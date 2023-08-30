@@ -56,29 +56,40 @@ class MainWeatherFragment : Fragment() {
     override fun onAttach(context: Context) {
         component.inject(this)
         super.onAttach(context)
+
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("TAG_LIFECYCLE_CALLBACK", "onCreate")
+        val lat = 50.2997427
+        val lon = 127.5023826
+        getNewWeather(lat, lon)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainWeatherBinding.inflate(layoutInflater, container, false)
+        Log.d("TAG_LIFECYCLE_CALLBACK", "onCreateView")
+
         return binding.root
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("TAG", "onDestroy")
+        Log.d("TAG_LIFECYCLE_CALLBACK", "onDestroy")
         _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("TAG", "onViewCreated")
-        val lat = 50.2997427
-        val lon = 127.5023826
+        Log.d("TAG_LIFECYCLE_CALLBACK", "onViewCreated")
+
         viewModel.clearLiveData()
-        getWeather(lat, lon)
+        viewModel.getWeather()
         setupRecyclerView()
         initData()
 
@@ -92,8 +103,8 @@ class MainWeatherFragment : Fragment() {
         }
     }
 
-    private fun getWeather(lat: Double, lon: Double) {
-        viewModel.getWeather(
+    private fun getNewWeather(lat: Double, lon: Double) {
+        viewModel.getNewWeather(
             lat,
             lon,
             WeatherApp.EXCLUDE,
@@ -108,23 +119,24 @@ class MainWeatherFragment : Fragment() {
     }
 
     private fun initData() {
+
         Log.d("TAG", "startInitData")
         viewModel.currentWeatherEntity.observe(viewLifecycleOwner) {
-            it?.let {
-                val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
-                val currentTime = System.currentTimeMillis()
-                val currentTimeString = format.format(currentTime).toString() + "\n" + it.dt
-                val feelLikeTemp = "Ощущается как " + it.feelsLike
+//            it?.let {
+            val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
+            val currentTime = System.currentTimeMillis()
+            val currentTimeString =
+                format.format(currentTime).toString() + "\n" + "данные от " + it.dt
+            val feelLikeTemp = "Ощущается как " + it.feelsLike
 
-                with(binding) {
-                    bindImage(ivWeatherIcon, it.icon)
-                    tvDescription.text = it.description
-                    tvCurrentTemp.text = it.temp
-                    tvCurrentTime.text = currentTimeString
-                    tvFeelsLikeTemp.text = feelLikeTemp
-                }
-                crossFadeAnimation()
+            with(binding) {
+                bindImage(ivWeatherIcon, it.icon)
+                tvDescription.text = it.description
+                tvCurrentTemp.text = it.temp
+                tvCurrentTime.text = currentTimeString
+                tvFeelsLikeTemp.text = feelLikeTemp
             }
+            crossFadeAnimation()
         }
         viewModel.searchedCities.observe(viewLifecycleOwner) {
             searchedCitiesAdapter.submitList(it)
@@ -142,9 +154,6 @@ class MainWeatherFragment : Fragment() {
 
     private fun crossFadeAnimation() {
         val shortAnimationDuration = resources.getInteger(android.R.integer.config_longAnimTime)
-        binding.progressBar.visibility = View.GONE
-        binding.clCurrentWeather.visibility = View.VISIBLE
-//        binding.rvFurtherWeek.visibility = View.VISIBLE
         binding.clCurrentWeather.apply {
             // Set the content view to 0% opacity but visible, so that it is visible
             // (but fully transparent) during the animation.
@@ -203,8 +212,8 @@ class MainWeatherFragment : Fragment() {
                 binding.etSearchCity.clearFocus()
                 binding.loadWeatherButton.text = it.value
                 searchCities("")
-                getWeather(it.geoLat, it.geoLon)
-              // remove softKeyBoard after chose city
+                getNewWeather(it.geoLat, it.geoLon)
+                // remove softKeyBoard after chose city
                 (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                     .hideSoftInputFromWindow(windowToken, 0)
             }
