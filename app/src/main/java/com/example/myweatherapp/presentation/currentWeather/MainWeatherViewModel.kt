@@ -21,8 +21,8 @@ class MainWeatherViewModel @Inject constructor(
     private val getSearchedCitiesUseCase: GetSearchedCitiesUseCase
 ) : ViewModel() {
 
-    private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity?>()
-    val currentWeatherEntity: LiveData<CurrentWeatherEntity?>
+    private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity>()
+    val currentWeatherEntity: LiveData<CurrentWeatherEntity>
         get() = _currentWeatherEntity
 
     private val _hourlyWeatherEntity = MutableLiveData<List<HourlyWeatherEntity>>()
@@ -33,11 +33,11 @@ class MainWeatherViewModel @Inject constructor(
     val searchedCities: LiveData<List<SearchedCities>> = _searchedCities
 
     fun clearLiveData() {
-        _currentWeatherEntity.value = null
+        _currentWeatherEntity.value = CurrentWeatherEntity()
         _hourlyWeatherEntity.value = listOf()
     }
 
-    fun getWeather(
+    fun getNewWeather(
         lat: Double,
         lon: Double,
         exclude: String,
@@ -47,6 +47,12 @@ class MainWeatherViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             loadDataUseCase(lat, lon, exclude, appid, units, lang)
+            getWeather()
+        }
+    }
+
+    fun getWeather() {
+        viewModelScope.launch {
             _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
             _hourlyWeatherEntity.value = getHourlyWeatherUseCase.invoke()
         }
