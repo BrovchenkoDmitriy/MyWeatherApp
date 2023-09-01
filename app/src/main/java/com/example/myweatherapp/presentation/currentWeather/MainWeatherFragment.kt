@@ -16,6 +16,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import coil.load
@@ -84,12 +85,13 @@ class MainWeatherFragment : Fragment() {
         _binding = null
     }
 
+    override fun onStop() {
+        super.onStop()
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("TAG_LIFECYCLE_CALLBACK", "onViewCreated")
 
-        viewModel.clearLiveData()
-        viewModel.getWeather()
         setupRecyclerView()
         initData()
 
@@ -102,7 +104,6 @@ class MainWeatherFragment : Fragment() {
             }
         }
     }
-
     private fun getNewWeather(lat: Double, lon: Double) {
         viewModel.getNewWeather(
             lat,
@@ -112,6 +113,7 @@ class MainWeatherFragment : Fragment() {
             WeatherApp.UNITS,
             WeatherApp.LANG
         )
+
     }
 
     private fun searchCities(query: String) {
