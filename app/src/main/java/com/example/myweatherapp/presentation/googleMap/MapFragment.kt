@@ -54,13 +54,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private var locationPermissionsIsGranted by Delegates.notNull<Boolean>()
 
     private var _binding: FragmentMapBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding?: throw RuntimeException("FragmentMapBinding is null")
 
     override fun onAttach(context: Context) {
         component.inject(this)
         super.onAttach(context)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
