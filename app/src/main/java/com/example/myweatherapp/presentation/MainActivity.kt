@@ -1,7 +1,11 @@
 package com.example.myweatherapp.presentation
 
 import android.os.Bundle
+import android.support.v4.media.RatingCompat.Style
+import android.window.SplashScreen
+import android.window.SplashScreenView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -20,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_TestRetrofitApp)
         manager = supportFragmentManager
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

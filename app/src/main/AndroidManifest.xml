@@ -11,11 +11,11 @@
         android:usesCleartextTraffic="true"
         android:name="com.example.myweatherapp.WeatherApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_weather"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_weather_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TestRetrofitApp">
+        android:theme="@style/Theme.App.Starting">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAcgxCaZtTWNEN4_4m_SENmQHysHFf_GpE" />
