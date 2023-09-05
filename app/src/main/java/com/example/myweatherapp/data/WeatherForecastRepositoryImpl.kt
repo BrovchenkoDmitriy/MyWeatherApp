@@ -1,6 +1,9 @@
 package com.example.myweatherapp.data
 
 import android.util.Log
+import com.example.myweatherapp.Error
+import com.example.myweatherapp.MyState
+import com.example.myweatherapp.Success
 import com.example.myweatherapp.data.database.CurrentWeatherDao
 import com.example.myweatherapp.data.database.DailyWeatherDao
 import com.example.myweatherapp.data.database.HourlyWeatherDao
@@ -27,12 +30,12 @@ class WeatherForecastRepositoryImpl @Inject constructor(
     override suspend fun getWeekWeather(): List<DailyWeatherEntity> {
         val listOfDailyWeatherDbModel = dailyWeatherDao.getWeatherWeek()
 
-        //if i will use in fun of DAO interface LiveData<List<...>>  instead of List<...>
+//  if i will use in fun of DAO interface LiveData<List<...>>  instead of List<...>
 //        return Transformations.map(listOfDailyWeatherDbModel){
 //            mapper.mapDailyDbModelListToDailyEntityList(it)
 //        }
 
-       return  mapper.mapDailyDbModelListToDailyEntityList(listOfDailyWeatherDbModel)
+        return mapper.mapDailyDbModelListToDailyEntityList(listOfDailyWeatherDbModel)
     }
 
     override suspend fun getHourlyWeather(): List<HourlyWeatherEntity> {
@@ -47,15 +50,11 @@ class WeatherForecastRepositoryImpl @Inject constructor(
         appid: String,
         units: String,
         lang: String
-    ) {
+    ): MyState {
 
-        try {
-            Log.d("TAGA", "try make retrofit")
+       return try {
             val weatherDto = apiService.getWeather(lat, lon, exclude, appid, units, lang)
-            Log.d("TAGA", weatherDto.currentDto.temp)
-            Log.d("TAGA", weatherDto.toString())
             val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto.currentDto)
-            Log.d("TAGA", currentWeather.temp)
             val weekWeather = mapper.mapDailyDtoListToDailyDbModelList(weatherDto.dailyDto)
             val hourlyWeather = mapper.mapHourlyDtoListToHourlyDbModelList(weatherDto.hourlyDto)
 
@@ -67,9 +66,28 @@ class WeatherForecastRepositoryImpl @Inject constructor(
 
             hourlyWeatherDao.clearHourlyWeather()
             hourlyWeatherDao.insertHourlyWeather(hourlyWeather)
+           
+           Log.d("SERVER_RESPONSE", "Success ${weatherDto.currentDto.dt}")
+            Success(
+                mapper.mapCurrentDbModelToCurrentEntity(
+                    mapper.mapCurrentDtoToCurrentDbModel(
+                        weatherDto.currentDto
+                    )
+                ),
+                mapper.mapDailyDbModelListToDailyEntityList(
+                    mapper.mapDailyDtoListToDailyDbModelList(
+                        weatherDto.dailyDto
+                    )
+                ),
+                mapper.mapHourlyDbModelListToHourlyEntityList(
+                    mapper.mapHourlyDtoListToHourlyDbModelList(
+                        weatherDto.hourlyDto
+                    )
+                )
+            )
 
         } catch (e: Exception) {
-            Log.d("TAG", e.stackTraceToString())
+            Error(e.localizedMessage ?: "Unknown exception")
         }
     }
 }
