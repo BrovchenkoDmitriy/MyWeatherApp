@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myweatherapp.Loading
+import com.example.myweatherapp.MyState
 import com.example.myweatherapp.domain.CurrentWeatherEntity
 import com.example.myweatherapp.domain.GeHourlyWeatherUseCase
 import com.example.myweatherapp.domain.GetCurrentWeatherUseCase
@@ -32,6 +34,10 @@ class MainWeatherViewModel @Inject constructor(
     private val _searchedCities = MutableLiveData<List<SearchedCities>>()
     val searchedCities: LiveData<List<SearchedCities>> = _searchedCities
 
+    private val _state = MutableLiveData<MyState>()
+    val state: LiveData<MyState> = _state
+
+
     fun clearLiveData() {
         _currentWeatherEntity.value = CurrentWeatherEntity()
         _hourlyWeatherEntity.value = listOf()
@@ -45,9 +51,13 @@ class MainWeatherViewModel @Inject constructor(
         units: String,
         lang: String
     ) {
+        _state.value = Loading
         viewModelScope.launch {
-            loadDataUseCase(lat, lon, exclude, appid, units, lang)
-            getWeather()
+
+            val state = loadDataUseCase(lat, lon, exclude, appid, units, lang)
+            _state.value = state
+
+//            getWeather()
         }
     }
 
@@ -55,6 +65,7 @@ class MainWeatherViewModel @Inject constructor(
         viewModelScope.launch {
             _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
             _hourlyWeatherEntity.value = getHourlyWeatherUseCase.invoke()
+
         }
     }
 

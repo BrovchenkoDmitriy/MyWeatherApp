@@ -11,23 +11,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import coil.load
 import com.example.myweatherapp.BuildConfig
+import com.example.myweatherapp.Error
+import com.example.myweatherapp.Loading
 import com.example.myweatherapp.R
+import com.example.myweatherapp.Success
 import com.example.myweatherapp.WeatherApp
 import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
@@ -91,9 +95,25 @@ class MainWeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("TAG_LIFECYCLE_CALLBACK", "onViewCreated")
-
+        viewModel.state.observe(viewLifecycleOwner){
+            when(it){
+                is Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                }
+                is Error -> {
+                    Toast.makeText(requireContext(), "${it.error}", Toast.LENGTH_SHORT).show()
+                    viewModel.getWeather()
+                    initData()
+                    crossFadeAnimation()
+                }
+                is Success -> {
+                    viewModel.getWeather()
+                    initData()
+                    crossFadeAnimation()
+                }
+            }
+        }
         setupRecyclerView()
-        initData()
 
         binding.etSearchCity.addTextChangedListener {
             it?.let {
@@ -124,7 +144,6 @@ class MainWeatherFragment : Fragment() {
 
         Log.d("TAG", "startInitData")
         viewModel.currentWeatherEntity.observe(viewLifecycleOwner) {
-//            it?.let {
             val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
             val currentTime = System.currentTimeMillis()
             val currentTimeString =
@@ -138,7 +157,6 @@ class MainWeatherFragment : Fragment() {
                 tvCurrentTime.text = currentTimeString
                 tvFeelsLikeTemp.text = feelLikeTemp
             }
-            crossFadeAnimation()
         }
         viewModel.searchedCities.observe(viewLifecycleOwner) {
             searchedCitiesAdapter.submitList(it)
@@ -182,14 +200,7 @@ class MainWeatherFragment : Fragment() {
         // Animate the loading view to 0% opacity. After the animation ends,
         // set its visibility to GONE as an optimization step (it won't
         // participate in layout passes, etc.)
-        binding.progressBar.animate()
-            .alpha(0f)
-            .setDuration(shortAnimationDuration.toLong())
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    binding.progressBar.visibility = View.GONE
-                }
-            })
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun bindImage(imgView: ImageView, icon: String) {
