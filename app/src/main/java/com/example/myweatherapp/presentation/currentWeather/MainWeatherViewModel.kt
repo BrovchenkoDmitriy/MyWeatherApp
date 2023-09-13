@@ -37,12 +37,6 @@ class MainWeatherViewModel @Inject constructor(
     private val _state = MutableLiveData<MyState>()
     val state: LiveData<MyState> = _state
 
-
-    fun clearLiveData() {
-        _currentWeatherEntity.value = CurrentWeatherEntity()
-        _hourlyWeatherEntity.value = listOf()
-    }
-
     fun getNewWeather(
         lat: Double,
         lon: Double,
@@ -53,11 +47,8 @@ class MainWeatherViewModel @Inject constructor(
     ) {
         _state.value = Loading
         viewModelScope.launch {
-
             val state = loadDataUseCase(lat, lon, exclude, appid, units, lang)
             _state.value = state
-
-//            getWeather()
         }
     }
 

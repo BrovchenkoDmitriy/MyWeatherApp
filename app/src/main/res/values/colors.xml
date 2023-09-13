@@ -11,4 +11,6 @@
     <color name="subWhite">#F2F7F2</color>
     <color name="yellow">#FAEE86</color>
     <color name="subYellow">#FFC107</color>
+
+    <color name="ic_launcher_weather_background">#FFFFFF</color>
 </resources>

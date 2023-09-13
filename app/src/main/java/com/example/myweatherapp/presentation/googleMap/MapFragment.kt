@@ -163,7 +163,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val context = requireContext()
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        if (ActivityCompat.checkSelfPermission(
+        return if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -176,14 +176,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val lat = location?.latitude ?: 0.0
             val lon = location?.longitude ?: 0.0
 
-            return LatLng(lat, lon)
+            LatLng(lat, lon)
 
         } else {
             locationPermissionsIsGranted = false
             Toast.makeText(requireContext(), "Location permission denied!", Toast.LENGTH_SHORT)
                 .show()
             requestLocationPermission()
-            return LatLng(0.0, 0.0)
+             LatLng(0.0, 0.0)
         }
     }
 
