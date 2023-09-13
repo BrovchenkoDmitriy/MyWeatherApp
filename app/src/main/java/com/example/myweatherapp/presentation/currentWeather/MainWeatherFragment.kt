@@ -1,7 +1,5 @@
 package com.example.myweatherapp.presentation.currentWeather
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
@@ -30,8 +28,8 @@ import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
@@ -66,10 +64,23 @@ class MainWeatherFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("TAG_LIFECYCLE_CALLBACK", "onCreate")
-        val lat = 50.2997427
-        val lon = 127.5023826
-        getNewWeather(lat, lon)
+
+
+        if (arguments !=null){
+            val lat1 = requireArguments().getString("Lat", "0.0")
+            val lon1 = requireArguments().getString("Lon", "0.0")
+            Log.d("LOCATION_BLABLA", "In fragment: \n lat: $lat1  lon: $lon1")
+            getNewWeather(lat1.toDouble(), lon1.toDouble())
+        }
+
+//        Log.d("LOCATION_BLABLA", "In fragment: \n lat: $lat1")
+//
+//        Log.d("LOCATION_BLABLA", "In fragment: \n lat: $lat1  lon: $lon1")
+//        getNewWeather(lat.toDouble(), lon.toDouble())
+
+//        val lat = 50.2997427
+//        val lon = 127.5023826
+//        getNewWeather(lat, lon)
     }
 
 
@@ -78,38 +89,27 @@ class MainWeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainWeatherBinding.inflate(layoutInflater, container, false)
-        Log.d("TAG_LIFECYCLE_CALLBACK", "onCreateView")
-
         return binding.root
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("TAG_LIFECYCLE_CALLBACK", "onDestroy")
         _binding = null
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("TAG_LIFECYCLE_CALLBACK", "onViewCreated")
         viewModel.state.observe(viewLifecycleOwner){
             when(it){
                 is Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
                 }
                 is Error -> {
-                    Toast.makeText(requireContext(), "${it.error}", Toast.LENGTH_SHORT).show()
-                    viewModel.getWeather()
+                    Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                     initData()
-                    crossFadeAnimation()
                 }
                 is Success -> {
-                    viewModel.getWeather()
                     initData()
-                    crossFadeAnimation()
                 }
             }
         }
@@ -141,7 +141,7 @@ class MainWeatherFragment : Fragment() {
     }
 
     private fun initData() {
-
+        viewModel.getWeather()
         Log.d("TAG", "startInitData")
         viewModel.currentWeatherEntity.observe(viewLifecycleOwner) {
             val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
@@ -170,6 +170,7 @@ class MainWeatherFragment : Fragment() {
                 else View.GONE
             }
         }
+        crossFadeAnimation()
     }
 
     private fun crossFadeAnimation() {
