@@ -11,7 +11,9 @@ data class CurrentWeatherEntity(
     val windGust: String? = "",
     val windDeg: String = "",
     val description: String = "",
-    val icon: String =""
+    val icon: String ="",
+    val lat: Double=0.0,
+    val lon: Double=0.0
 )
 
 data class DailyWeatherEntity(

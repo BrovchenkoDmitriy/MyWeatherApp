@@ -17,7 +17,9 @@ data class CurrentWeatherDbModel(
     val windGust: String?,
     val windDeg: String,
     val description: String,
-    val icon: String
+    val icon: String,
+    val lat: Double,
+    val lon: Double
 )
 
 @Entity(tableName = "daily_weather")

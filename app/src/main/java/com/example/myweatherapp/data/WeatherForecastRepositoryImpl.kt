@@ -54,7 +54,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
 
        return try {
             val weatherDto = apiService.getWeather(lat, lon, exclude, appid, units, lang)
-            val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto.currentDto)
+            val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto)
             val weekWeather = mapper.mapDailyDtoListToDailyDbModelList(weatherDto.dailyDto)
             val hourlyWeather = mapper.mapHourlyDtoListToHourlyDbModelList(weatherDto.hourlyDto)
 
@@ -71,7 +71,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
             Success(
                 mapper.mapCurrentDbModelToCurrentEntity(
                     mapper.mapCurrentDtoToCurrentDbModel(
-                        weatherDto.currentDto
+                        weatherDto
                     )
                 ),
                 mapper.mapDailyDbModelListToDailyEntityList(

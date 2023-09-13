@@ -4,13 +4,13 @@ import android.icu.text.SimpleDateFormat
 import com.example.myweatherapp.data.database.CurrentWeatherDbModel
 import com.example.myweatherapp.data.database.DailyWeatherDbModel
 import com.example.myweatherapp.data.database.HourlyWeatherDbModel
-import com.example.myweatherapp.data.network.CurrentWeatherDto
 import com.example.myweatherapp.data.network.DailyWeatherDto
 import com.example.myweatherapp.data.network.HourlyWeatherDto
+import com.example.myweatherapp.data.network.WeatherDto
 import com.example.myweatherapp.domain.CurrentWeatherEntity
 import com.example.myweatherapp.domain.DailyWeatherEntity
 import com.example.myweatherapp.domain.HourlyWeatherEntity
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -31,19 +31,21 @@ class WeatherListMapper @Inject constructor() {
 
 ////////////////////////////////////  DtoToDbModel  ////////////////////////////////////////////////
 
-    fun mapCurrentDtoToCurrentDbModel(currentWeatherDto: CurrentWeatherDto): CurrentWeatherDbModel {
+    fun mapCurrentDtoToCurrentDbModel(weatherDto: WeatherDto): CurrentWeatherDbModel {
         return CurrentWeatherDbModel(
             id = 0,
-            dt = formatForCurrentWeather.format(currentWeatherDto.dt.toLong() * 1000),
-            temp = "${currentWeatherDto.temp.toDouble().toInt()}°C",
-            feelsLike = "${currentWeatherDto.feelsLike.toDouble().toInt()}\u00B0C",
-            pressure = currentWeatherDto.pressure,
-            humidity = currentWeatherDto.humidity,
-            windSpeed = currentWeatherDto.windSpeed,
-            windGust = currentWeatherDto.windGust,
-            windDeg = currentWeatherDto.windDeg,
-            description = currentWeatherDto.weather[0].description.myCapitalize(),
-            icon = currentWeatherDto.weather[0].icon
+            dt = formatForCurrentWeather.format(weatherDto.currentDto.dt.toLong() * 1000),
+            temp = "${weatherDto.currentDto.temp.toDouble().toInt()}°C",
+            feelsLike = "${weatherDto.currentDto.feelsLike.toDouble().toInt()}\u00B0C",
+            pressure = weatherDto.currentDto.pressure,
+            humidity = weatherDto.currentDto.humidity,
+            windSpeed = weatherDto.currentDto.windSpeed,
+            windGust = weatherDto.currentDto.windGust,
+            windDeg = weatherDto.currentDto.windDeg,
+            description = weatherDto.currentDto.weather[0].description.myCapitalize(),
+            icon = weatherDto.currentDto.weather[0].icon,
+            lat = weatherDto.lat.toDouble(),
+            lon = weatherDto.lon.toDouble()
         )
     }
 
@@ -108,7 +110,9 @@ class WeatherListMapper @Inject constructor() {
             windGust = currentWeatherDbModel.windGust,
             windDeg = currentWeatherDbModel.windDeg,
             description = currentWeatherDbModel.description,
-            icon = currentWeatherDbModel.icon
+            icon = currentWeatherDbModel.icon,
+            lat = currentWeatherDbModel.lat,
+            lon = currentWeatherDbModel.lon
         )
     }
 
