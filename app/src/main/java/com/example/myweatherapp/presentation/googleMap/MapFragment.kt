@@ -77,9 +77,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         //  startMarker?.tag = 0
         lifecycleScope.launch {
             mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
+                googleMap.clear()
                 val location = LatLng(it.lat, it.lon)
                 val startMarker = googleMap.addMarker(MarkerOptions().position(location)) as Marker
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 7f))
+//              googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 7f)) //без анимации
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 7f))
                 startMarker.title = it.temp
                 startMarker.snippet = it.description
                 startMarker.showInfoWindow()
@@ -93,6 +95,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         googleMap.setOnMarkerClickListener {
+           // googleMap.clear()
             onMarkerClick(it)
         }
     }
