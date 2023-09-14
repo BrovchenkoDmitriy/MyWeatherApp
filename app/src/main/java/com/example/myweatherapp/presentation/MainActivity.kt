@@ -5,16 +5,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
-import android.support.v4.media.RatingCompat.Style
-import android.util.Log
 import android.widget.Toast
-import android.window.SplashScreen
-import android.window.SplashScreenView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -25,9 +19,6 @@ import com.example.myweatherapp.databinding.ActivityMainBinding
 import com.example.myweatherapp.presentation.googleMap.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
@@ -54,12 +45,15 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        val latLng = getCurrentLocation()
-        val arg = Bundle().apply {
-            putString("Lat", latLng?.latitude.toString())
-            putString("Lon", latLng?.longitude.toString())
+        if( savedInstanceState == null){
+            val latLng = getCurrentLocation()
+            val arg = Bundle().apply {
+                putString("Lat", latLng?.latitude.toString())
+                putString("Lon", latLng?.longitude.toString())
+            }
+            navController.navigate(R.id.navigation_current_weather, arg)
         }
-        navController.navigate(R.id.navigation_current_weather, arg)
+
     }
 
     private fun getCurrentLocation(): LatLng? {
@@ -77,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
             val lat = location?.latitude ?: 0.0
             val lon = location?.longitude ?: 0.0
-            Log.d("LOCATION_BLABLA", "In activity: \n lat: $lat  lon: $lon")
             LatLng(lat, lon)
 
         } else {

@@ -28,7 +28,6 @@ import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.delay
 import java.util.Locale
 import javax.inject.Inject
@@ -67,22 +66,13 @@ class MainWeatherFragment : Fragment() {
 
 
         if (arguments !=null){
-            val lat1 = requireArguments().getString("Lat", "0.0")
-            val lon1 = requireArguments().getString("Lon", "0.0")
-            Log.d("LOCATION_BLABLA", "In fragment: \n lat: $lat1  lon: $lon1")
-            getNewWeather(lat1.toDouble(), lon1.toDouble())
+            if (savedInstanceState == null){
+                val lat1 = requireArguments().getString("Lat", "0.0")
+                val lon1 = requireArguments().getString("Lon", "0.0")
+                getNewWeather(lat1.toDouble(), lon1.toDouble())
+            }
         }
-
-//        Log.d("LOCATION_BLABLA", "In fragment: \n lat: $lat1")
-//
-//        Log.d("LOCATION_BLABLA", "In fragment: \n lat: $lat1  lon: $lon1")
-//        getNewWeather(lat.toDouble(), lon.toDouble())
-
-//        val lat = 50.2997427
-//        val lon = 127.5023826
-//        getNewWeather(lat, lon)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -133,7 +123,6 @@ class MainWeatherFragment : Fragment() {
             WeatherApp.UNITS,
             WeatherApp.LANG
         )
-
     }
 
     private fun searchCities(query: String) {
