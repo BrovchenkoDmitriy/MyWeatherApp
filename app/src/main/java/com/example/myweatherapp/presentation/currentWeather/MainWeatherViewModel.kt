@@ -9,7 +9,6 @@ import com.example.myweatherapp.MyState
 import com.example.myweatherapp.domain.CurrentWeatherEntity
 import com.example.myweatherapp.domain.GeHourlyWeatherUseCase
 import com.example.myweatherapp.domain.GetCurrentWeatherUseCase
-import com.example.myweatherapp.domain.GetLocationNameUseCase
 import com.example.myweatherapp.domain.GetSearchedCitiesUseCase
 import com.example.myweatherapp.domain.HourlyWeatherEntity
 import com.example.myweatherapp.domain.LoadDataUseCase
@@ -21,8 +20,7 @@ class MainWeatherViewModel @Inject constructor(
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
     private val getHourlyWeatherUseCase: GeHourlyWeatherUseCase,
     private val loadDataUseCase: LoadDataUseCase,
-    private val getSearchedCitiesUseCase: GetSearchedCitiesUseCase,
-    private val getLocationNameUseCase: GetLocationNameUseCase
+    private val getSearchedCitiesUseCase: GetSearchedCitiesUseCase
 ) : ViewModel() {
 
     private val _currentWeatherEntity = MutableLiveData<CurrentWeatherEntity>()
@@ -39,10 +37,6 @@ class MainWeatherViewModel @Inject constructor(
     private val _state = MutableLiveData<MyState>()
     val state: LiveData<MyState> = _state
 
-    private val _locationName = MutableLiveData<String>()
-    val locationName: LiveData<String>
-        get() = _locationName
-
     fun getNewWeather(
         lat: Double,
         lon: Double,
@@ -53,8 +47,6 @@ class MainWeatherViewModel @Inject constructor(
     ) {
         _state.value = Loading
         viewModelScope.launch {
-            val locationName = getLocationNameUseCase.invoke(lat, lon)
-            _locationName.value = locationName
             val state = loadDataUseCase(lat, lon, exclude, appid, units, lang)
             _state.value = state
 

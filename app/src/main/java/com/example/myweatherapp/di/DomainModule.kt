@@ -1,10 +1,8 @@
 package com.example.myweatherapp.di
 
 import com.example.myweatherapp.data.SearchCityAutocompleteRepositoryImpl
-import com.example.myweatherapp.data.SearchLocationNameRepositoryImpl
 import com.example.myweatherapp.data.WeatherForecastRepositoryImpl
 import com.example.myweatherapp.domain.SearchCityAutocompleteRepository
-import com.example.myweatherapp.domain.SearchLocationNameRepository
 import com.example.myweatherapp.domain.WeatherForecastRepository
 import dagger.Binds
 import dagger.Module
@@ -22,10 +20,4 @@ interface DomainModule {
     fun bindSearchCitiesAutocompleteRepository(
         impl: SearchCityAutocompleteRepositoryImpl
     ): SearchCityAutocompleteRepository
-
-    @Binds
-    @ApplicationScope
-    fun bindSearchLocationNameRepository(
-        impl: SearchLocationNameRepositoryImpl
-    ):SearchLocationNameRepository
 }

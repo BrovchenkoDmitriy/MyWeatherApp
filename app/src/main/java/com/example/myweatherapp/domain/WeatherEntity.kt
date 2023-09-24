@@ -13,7 +13,8 @@ data class CurrentWeatherEntity(
     val description: String = "",
     val icon: String ="",
     val lat: Double=0.0,
-    val lon: Double=0.0
+    val lon: Double=0.0,
+    val locationName: String
 )
 
 data class DailyWeatherEntity(
