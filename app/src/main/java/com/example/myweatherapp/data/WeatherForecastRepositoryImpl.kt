@@ -74,19 +74,13 @@ class WeatherForecastRepositoryImpl @Inject constructor(
             Log.d("SERVER_RESPONSE", "Success ${weatherDto.currentDto.dt}")
             Success(
                 mapper.mapCurrentDbModelToCurrentEntity(
-                    mapper.mapCurrentDtoToCurrentDbModel(
-                        weatherDto, locationNameDto
-                    )
+                    currentWeather
                 ),
                 mapper.mapDailyDbModelListToDailyEntityList(
-                    mapper.mapDailyDtoListToDailyDbModelList(
-                        weatherDto.dailyDto
-                    )
+                    weekWeather
                 ),
                 mapper.mapHourlyDbModelListToHourlyEntityList(
-                    mapper.mapHourlyDtoListToHourlyDbModelList(
-                        weatherDto.hourlyDto
-                    )
+                    hourlyWeather
                 )
             )
 
@@ -105,6 +99,6 @@ class WeatherForecastRepositoryImpl @Inject constructor(
         STATE("5"),
         COUNTY("8"),
         CITY("10"),
-        TOWN("12"),
+        TOWN("18"),
     }
 }
