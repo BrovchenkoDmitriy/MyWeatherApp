@@ -148,9 +148,6 @@ class MainWeatherFragment : Fragment() {
                 binding.loadWeatherButton.text = it.locationName
             }
         }
-//        viewModel.locationName.observe(viewLifecycleOwner){
-//            binding.loadWeatherButton.text = it
-//        }
         viewModel.searchedCities.observe(viewLifecycleOwner) {
             searchedCitiesAdapter.submitList(it)
         }
@@ -217,7 +214,6 @@ class MainWeatherFragment : Fragment() {
             searchedCitiesAdapter.onItemClickListener = {
                 binding.etSearchCity.text.clear()
                 binding.etSearchCity.clearFocus()
-                binding.loadWeatherButton.text = it.value
                 searchCities("")
                 getNewWeather(it.geoLat, it.geoLon)
                 // remove softKeyBoard after chose city
