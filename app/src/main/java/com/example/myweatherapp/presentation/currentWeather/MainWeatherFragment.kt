@@ -145,11 +145,12 @@ class MainWeatherFragment : Fragment() {
                 tvCurrentTemp.text = it.temp
                 tvCurrentTime.text = currentTimeString
                 tvFeelsLikeTemp.text = feelLikeTemp
+                binding.loadWeatherButton.text = it.locationName
             }
         }
-        viewModel.locationName.observe(viewLifecycleOwner){
-            binding.loadWeatherButton.text = it
-        }
+//        viewModel.locationName.observe(viewLifecycleOwner){
+//            binding.loadWeatherButton.text = it
+//        }
         viewModel.searchedCities.observe(viewLifecycleOwner) {
             searchedCitiesAdapter.submitList(it)
         }

@@ -8,6 +8,7 @@ import com.example.myweatherapp.data.database.CurrentWeatherDao
 import com.example.myweatherapp.data.database.DailyWeatherDao
 import com.example.myweatherapp.data.database.HourlyWeatherDao
 import com.example.myweatherapp.data.network.OpenWeatherAPi
+import com.example.myweatherapp.data.network.SearchLocationNameApi
 import com.example.myweatherapp.domain.CurrentWeatherEntity
 import com.example.myweatherapp.domain.DailyWeatherEntity
 import com.example.myweatherapp.domain.HourlyWeatherEntity
@@ -19,7 +20,8 @@ class WeatherForecastRepositoryImpl @Inject constructor(
     private val currentWeatherDao: CurrentWeatherDao,
     private val dailyWeatherDao: DailyWeatherDao,
     private val hourlyWeatherDao: HourlyWeatherDao,
-    private val apiService: OpenWeatherAPi
+    private val openWeatherAPi: OpenWeatherAPi,
+    private val searchLocationNameApi: SearchLocationNameApi
 ) : WeatherForecastRepository {
 
     override suspend fun getCurrentWeather(): CurrentWeatherEntity {
@@ -52,9 +54,11 @@ class WeatherForecastRepositoryImpl @Inject constructor(
         lang: String
     ): MyState {
 
-       return try {
-            val weatherDto = apiService.getWeather(lat, lon, exclude, appid, units, lang)
-            val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto)
+        return try {
+            val weatherDto = openWeatherAPi.getWeather(lat, lon, exclude, appid, units, lang)
+            val locationNameDto =
+                searchLocationNameApi.getLocationName(lat, lon, DETAIL_OF_RESPONSE, RESPONSE_FORMAT)
+            val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto, locationNameDto)
             val weekWeather = mapper.mapDailyDtoListToDailyDbModelList(weatherDto.dailyDto)
             val hourlyWeather = mapper.mapHourlyDtoListToHourlyDbModelList(weatherDto.hourlyDto)
 
@@ -66,12 +70,12 @@ class WeatherForecastRepositoryImpl @Inject constructor(
 
             hourlyWeatherDao.clearHourlyWeather()
             hourlyWeatherDao.insertHourlyWeather(hourlyWeather)
-           
-           Log.d("SERVER_RESPONSE", "Success ${weatherDto.currentDto.dt}")
+
+            Log.d("SERVER_RESPONSE", "Success ${weatherDto.currentDto.dt}")
             Success(
                 mapper.mapCurrentDbModelToCurrentEntity(
                     mapper.mapCurrentDtoToCurrentDbModel(
-                        weatherDto
+                        weatherDto, locationNameDto
                     )
                 ),
                 mapper.mapDailyDbModelListToDailyEntityList(
@@ -89,5 +93,18 @@ class WeatherForecastRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Error(e.localizedMessage ?: "Unknown exception")
         }
+    }
+
+    companion object {
+        const val RESPONSE_FORMAT = "jsonv2"
+        private val DETAIL_OF_RESPONSE = DetailOfResponse.TOWN.value
+    }
+
+    enum class DetailOfResponse(val value: String) {
+        COUNTRY("3"),
+        STATE("5"),
+        COUNTY("8"),
+        CITY("10"),
+        TOWN("12"),
     }
 }

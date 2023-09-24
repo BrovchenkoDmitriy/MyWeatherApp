@@ -12,7 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     entities = [CurrentWeatherDbModel::class,
         DailyWeatherDbModel::class,
         HourlyWeatherDbModel::class],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class AppDataBase : RoomDatabase() {
@@ -45,7 +45,7 @@ abstract class AppDataBase : RoomDatabase() {
                     AppDataBase::class.java,
                     DB_NAME
                 )//.allowMainThreadQueries()  //Отключает проверку запроса основного потока для Room.
-                    .addMigrations(MIGRATION_3_4)
+                    .addMigrations(MIGRATION_4_5)
                     .build()
                 //После этой строчки последующие getInstance будет возвращать созданный экземпляр базы данных
                 INSTANCE = db
@@ -55,9 +55,8 @@ abstract class AppDataBase : RoomDatabase() {
     }
 }
 
-val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+val MIGRATION_4_5: Migration = object : Migration(4, 5) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE current_weather ADD COLUMN lat DOUBLE DEFAULT 0.0 NOT NULL")
-        database.execSQL("ALTER TABLE current_weather ADD COLUMN lon DOUBLE DEFAULT 0.0 NOT NULL")
+        database.execSQL("ALTER TABLE current_weather ADD COLUMN locationName TEXT DEFAULT '' NOT NULL")
     }
 }

@@ -6,6 +6,7 @@ import com.example.myweatherapp.data.database.DailyWeatherDbModel
 import com.example.myweatherapp.data.database.HourlyWeatherDbModel
 import com.example.myweatherapp.data.network.DailyWeatherDto
 import com.example.myweatherapp.data.network.HourlyWeatherDto
+import com.example.myweatherapp.data.network.LocationNameDto
 import com.example.myweatherapp.data.network.WeatherDto
 import com.example.myweatherapp.domain.CurrentWeatherEntity
 import com.example.myweatherapp.domain.DailyWeatherEntity
@@ -31,7 +32,10 @@ class WeatherListMapper @Inject constructor() {
 
 ////////////////////////////////////  DtoToDbModel  ////////////////////////////////////////////////
 
-    fun mapCurrentDtoToCurrentDbModel(weatherDto: WeatherDto): CurrentWeatherDbModel {
+    fun mapCurrentDtoToCurrentDbModel(
+        weatherDto: WeatherDto,
+        searchedLocationNameDto: LocationNameDto
+    ): CurrentWeatherDbModel {
         return CurrentWeatherDbModel(
             id = 0,
             dt = formatForCurrentWeather.format(weatherDto.currentDto.dt.toLong() * 1000),
@@ -45,7 +49,8 @@ class WeatherListMapper @Inject constructor() {
             description = weatherDto.currentDto.weather[0].description.myCapitalize(),
             icon = weatherDto.currentDto.weather[0].icon,
             lat = weatherDto.lat.toDouble(),
-            lon = weatherDto.lon.toDouble()
+            lon = weatherDto.lon.toDouble(),
+            locationName = searchedLocationNameDto.displayName
         )
     }
 
@@ -112,7 +117,8 @@ class WeatherListMapper @Inject constructor() {
             description = currentWeatherDbModel.description,
             icon = currentWeatherDbModel.icon,
             lat = currentWeatherDbModel.lat,
-            lon = currentWeatherDbModel.lon
+            lon = currentWeatherDbModel.lon,
+            locationName = currentWeatherDbModel.locationName
         )
     }
 
