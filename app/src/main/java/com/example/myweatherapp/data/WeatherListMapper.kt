@@ -50,8 +50,21 @@ class WeatherListMapper @Inject constructor() {
             icon = weatherDto.currentDto.weather[0].icon,
             lat = weatherDto.lat.toDouble(),
             lon = weatherDto.lon.toDouble(),
-            locationName = searchedLocationNameDto.displayName
+            locationName = formattedLocationName(searchedLocationNameDto)
         )
+    }
+    private fun formattedLocationName(searchedLocationNameDto: LocationNameDto):String {
+        with(searchedLocationNameDto.address) {
+            if (town.isNotEmpty()){
+                return  StringBuilder().append("$town\n $state, $country").toString()
+            } else {
+                if (city.isNotEmpty()) {
+                    return StringBuilder().append("$city\n $state, $country").toString()
+                } else {
+                    return StringBuilder().append("$county\n $state, $country").toString()
+                }
+            }
+        }
     }
 
     private fun mapHourlyDtoToHourlyDbModel(hourlyWeatherDto: HourlyWeatherDto): HourlyWeatherDbModel {
