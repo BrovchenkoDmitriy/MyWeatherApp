@@ -12,8 +12,8 @@ data class LocationNameDto(
 data class Address(
     val town: String = "",
     val city: String = "",
-    val county: String,
-    val state: String,
-    val region: String,
-    val country: String,
+    val county: String = "",
+    val state: String = "",
+    val region: String = "",
+    val country: String = "",
 )

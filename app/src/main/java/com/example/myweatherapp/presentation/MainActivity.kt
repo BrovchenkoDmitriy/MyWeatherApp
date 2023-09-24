@@ -3,8 +3,10 @@ package com.example.myweatherapp.presentation
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -68,9 +70,14 @@ class MainActivity : AppCompatActivity() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionsIsGranted = true
-            val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_FINE
+            val location = locationManager.getBestProvider(criteria, true)
+                ?.let { locationManager.getLastKnownLocation(it) }
+            //  val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
             val lat = location?.latitude ?: 0.0
             val lon = location?.longitude ?: 0.0
+            Log.d("SEARCH_LOCATION_NAME", "$lat $lon")
             LatLng(lat, lon)
 
         } else {

@@ -55,13 +55,14 @@ class WeatherListMapper @Inject constructor() {
     }
     private fun formattedLocationName(searchedLocationNameDto: LocationNameDto):String {
         with(searchedLocationNameDto.address) {
+            val state = if (city == state) "" else "$state, "
             if (town.isNotEmpty()){
-                return  StringBuilder().append("$town\n $state, $country").toString()
+                return  StringBuilder().append("$town\n$state$country").toString()
             } else {
                 if (city.isNotEmpty()) {
-                    return StringBuilder().append("$city\n $state, $country").toString()
+                    return StringBuilder().append("$city\n$state$country").toString()
                 } else {
-                    return StringBuilder().append("$county\n $state, $country").toString()
+                    return StringBuilder().append("$county\n$state$country").toString()
                 }
             }
         }
