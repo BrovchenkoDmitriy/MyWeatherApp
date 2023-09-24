@@ -147,6 +147,9 @@ class MainWeatherFragment : Fragment() {
                 tvFeelsLikeTemp.text = feelLikeTemp
             }
         }
+        viewModel.locationName.observe(viewLifecycleOwner){
+            binding.loadWeatherButton.text = it
+        }
         viewModel.searchedCities.observe(viewLifecycleOwner) {
             searchedCitiesAdapter.submitList(it)
         }

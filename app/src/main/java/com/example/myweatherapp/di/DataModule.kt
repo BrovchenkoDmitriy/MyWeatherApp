@@ -7,6 +7,7 @@ import com.example.myweatherapp.data.database.DailyWeatherDao
 import com.example.myweatherapp.data.database.HourlyWeatherDao
 import com.example.myweatherapp.data.network.OpenWeatherAPi
 import com.example.myweatherapp.data.network.SearchCityApi
+import com.example.myweatherapp.data.network.SearchLocationNameApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -61,6 +62,15 @@ class DataModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl("https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/")
             .build().create(SearchCityApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchLocationNameService(moshi: Moshi):SearchLocationNameApi{
+        return Retrofit.Builder()
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .baseUrl("https://nominatim.openstreetmap.org/")
+            .build().create((SearchLocationNameApi::class.java))
     }
 
     @Provides
