@@ -3,13 +3,15 @@ package com.example.myweatherapp.presentation
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Criteria
 import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build.VERSION
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.location.LocationManagerCompat
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -19,6 +21,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.myweatherapp.R
 import com.example.myweatherapp.databinding.ActivityMainBinding
 import com.example.myweatherapp.presentation.googleMap.MapFragment
+import com.google.android.gms.common.util.concurrent.HandlerExecutor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlin.properties.Delegates
@@ -42,53 +45,117 @@ class MainActivity : AppCompatActivity() {
         navController = findNavController(R.id.nav_host_fragment_activity_main)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_current_weather, R.id.navigation_week_forecast, R.id.navigation_map_fragment
+                R.id.navigation_current_weather,
+                R.id.navigation_week_forecast,
+                R.id.navigation_map_fragment
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        if( savedInstanceState == null){
-            val latLng = getCurrentLocation()
-            val arg = Bundle().apply {
-                putString("Lat", latLng?.latitude.toString())
-                putString("Lon", latLng?.longitude.toString())
-            }
-            navController.navigate(R.id.navigation_current_weather, arg)
+        if (savedInstanceState == null) {
+            getCurrentLocation()
         }
-
     }
 
-    private fun getCurrentLocation(): LatLng? {
+    private fun navigate(latLng: LatLng) {
+        val arg = Bundle().apply {
+            putString("Lat", latLng.latitude.toString())
+            putString("Lon", latLng.longitude.toString())
+        }
+        navController.navigate(R.id.navigation_current_weather, arg)
+    }
+
+
+    private fun getCurrentLocation() {
+        var lat: Double
+        var lon: Double
         val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val executor = if (VERSION.SDK_INT >= 30) {
+            mainExecutor
+        } else {
+            HandlerExecutor(mainLooper)
+        }
+        val isLocationEnabled = if (VERSION.SDK_INT >= 28) {
+            locationManager.isLocationEnabled
+        } else {
+            LocationManagerCompat.isLocationEnabled(locationManager)
+        }
 
         return if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            locationPermissionsIsGranted = true
-            val criteria = Criteria()
-            criteria.accuracy = Criteria.ACCURACY_FINE
-            val location = locationManager.getBestProvider(criteria, true)
-                ?.let { locationManager.getLastKnownLocation(it) }
-            //  val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
-            val lat = location?.latitude ?: 0.0
-            val lon = location?.longitude ?: 0.0
-            Log.d("SEARCH_LOCATION_NAME", "$lat $lon")
-            LatLng(lat, lon)
-
-        } else {
             locationPermissionsIsGranted = false
             Toast.makeText(this, "Location permission denied!", Toast.LENGTH_SHORT)
                 .show()
             requestLocationPermission()
-            null
+        } else {
+            locationPermissionsIsGranted = true
+            val context = applicationContext
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            val bestLocationProvider =
+                if (capabilities == null) {
+                    LocationManager.GPS_PROVIDER
+                } else {
+                    if ((capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI))
+                    ) {
+                        LocationManager.NETWORK_PROVIDER
+                    } else {
+                        LocationManager.GPS_PROVIDER
+                    }
+                }
+
+            if (!isLocationEnabled) {
+                // Location disabled
+                Toast.makeText(
+                    this@MainActivity,
+                    "location disabled. The screen will display information about your last saved location.",
+                    Toast.LENGTH_LONG
+                ).show()
+                // если геолокация отключена, то любой запрос на локацию вернёт null
+                // как вариант можно брать координаты из БД (например "домашний город")
+                val location = locationManager.getLastKnownLocation(bestLocationProvider)
+                lat = location?.latitude ?: 0.0
+                lon = location?.longitude ?: 0.0
+                navigate(LatLng(lat, lon))
+            } else {
+                if (VERSION.SDK_INT >= 30) {
+                    locationManager.getCurrentLocation(
+                        bestLocationProvider,
+                        null,
+                        executor
+                    )
+                    {
+                        lat = it.latitude
+                        lon = it.longitude
+                        navigate(LatLng(lat, lon))
+                    }
+                    return
+                } else {
+                    LocationManagerCompat.getCurrentLocation(
+                        locationManager,
+                        bestLocationProvider,
+                        null,
+                        executor
+                    )
+                    {
+                        lat = it.latitude
+                        lon = it.longitude
+                        navigate(LatLng(lat, lon))
+                    }
+                    return
+                }
+            }
         }
     }
-
     private fun requestLocationPermission() {
         ActivityCompat.requestPermissions(
             this,
