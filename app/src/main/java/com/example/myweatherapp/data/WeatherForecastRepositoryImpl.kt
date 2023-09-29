@@ -57,7 +57,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
         return try {
             val weatherDto = openWeatherAPi.getWeather(lat, lon, exclude, appid, units, lang)
             val locationNameDto =
-                searchLocationNameApi.getLocationName(lat, lon, DETAIL_OF_RESPONSE, RESPONSE_FORMAT)
+                searchLocationNameApi.getLocationName(lat, lon, DETAIL_OF_RESPONSE, RESPONSE_FORMAT, "ru")
             val currentWeather = mapper.mapCurrentDtoToCurrentDbModel(weatherDto, locationNameDto)
             val weekWeather = mapper.mapDailyDtoListToDailyDbModelList(weatherDto.dailyDto)
             val hourlyWeather = mapper.mapHourlyDtoListToHourlyDbModelList(weatherDto.hourlyDto)

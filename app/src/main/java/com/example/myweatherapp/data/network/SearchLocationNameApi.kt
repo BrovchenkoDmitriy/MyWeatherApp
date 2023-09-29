@@ -2,7 +2,6 @@ package com.example.myweatherapp.data.network
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import retrofit2.http.Url
 import javax.inject.Inject
 
 interface SearchLocationNameApi {
@@ -12,7 +11,8 @@ interface SearchLocationNameApi {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("zoom") zoom: String,
-        @Query("format") format:String
+        @Query("format") format:String,
+        @Query("accept-language") acceptLanguage: String
     ):LocationNameDto
 }
 
@@ -23,8 +23,9 @@ class SearchLocationNameApiImpl @Inject constructor(
          lat: Double,
          lon: Double,
         zoom: String,
-        format:String
+        format:String,
+         acceptLanguage:String
     ): LocationNameDto {
-        return searchLocationNameApi.getLocationName(lat, lon, zoom, format)
+        return searchLocationNameApi.getLocationName(lat, lon, zoom, format, acceptLanguage)
     }
 }
