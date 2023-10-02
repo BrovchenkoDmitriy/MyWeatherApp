@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myweatherapp.Loading
-import com.example.myweatherapp.MyState
+import com.example.myweatherapp.domain.ResponseError
+import com.example.myweatherapp.domain.ResponseSuccess
 import com.example.myweatherapp.domain.CurrentWeatherEntity
 import com.example.myweatherapp.domain.GeHourlyWeatherUseCase
 import com.example.myweatherapp.domain.GetCurrentWeatherUseCase
@@ -13,6 +13,7 @@ import com.example.myweatherapp.domain.GetSearchedCitiesUseCase
 import com.example.myweatherapp.domain.HourlyWeatherEntity
 import com.example.myweatherapp.domain.LoadDataUseCase
 import com.example.myweatherapp.domain.SearchedCities
+import com.example.myweatherapp.presentation.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,9 +48,15 @@ class MainWeatherViewModel @Inject constructor(
     ) {
         _state.value = Loading
         viewModelScope.launch {
-            val state = loadDataUseCase(lat, lon, exclude, appid, units, lang)
-            _state.value = state
+            when (val result = loadDataUseCase(lat, lon, exclude, appid, units, lang)) {
+                is ResponseSuccess -> _state.value = Success(
+                    result.currentWeatherEntity,
+                    result.dailyWeatherEntity,
+                    result.hourlyWeatherEntity
+                )
 
+                is ResponseError -> _state.value = Error(result.error)
+            }
         }
     }
 

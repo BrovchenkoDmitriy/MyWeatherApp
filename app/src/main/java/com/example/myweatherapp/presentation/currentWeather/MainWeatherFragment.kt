@@ -19,12 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import coil.load
 import com.example.myweatherapp.BuildConfig
-import com.example.myweatherapp.Error
-import com.example.myweatherapp.Loading
 import com.example.myweatherapp.R
-import com.example.myweatherapp.Success
 import com.example.myweatherapp.WeatherApp
 import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
+import com.example.myweatherapp.presentation.Error
+import com.example.myweatherapp.presentation.Loading
+import com.example.myweatherapp.presentation.Success
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
@@ -65,8 +65,8 @@ class MainWeatherFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
 
-        if (arguments !=null){
-            if (savedInstanceState == null){
+        if (arguments != null) {
+            if (savedInstanceState == null) {
                 val lat1 = requireArguments().getString("Lat", "0.0")
                 val lon1 = requireArguments().getString("Lon", "0.0")
                 getNewWeather(lat1.toDouble(), lon1.toDouble())
@@ -89,15 +89,17 @@ class MainWeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.state.observe(viewLifecycleOwner){
-            when(it){
+        viewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
                 is Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.VISIBLE
                 }
+
                 is Error -> {
                     Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
                     initData()
                 }
+
                 is Success -> {
                     initData()
                 }
@@ -114,6 +116,7 @@ class MainWeatherFragment : Fragment() {
             }
         }
     }
+
     private fun getNewWeather(lat: Double, lon: Double) {
         viewModel.getNewWeather(
             lat,

@@ -1,9 +1,9 @@
 package com.example.myweatherapp.data
 
 import android.util.Log
-import com.example.myweatherapp.Error
-import com.example.myweatherapp.MyState
-import com.example.myweatherapp.Success
+import com.example.myweatherapp.domain.ResponseError
+import com.example.myweatherapp.domain.ResultOfResponse
+import com.example.myweatherapp.domain.ResponseSuccess
 import com.example.myweatherapp.data.database.CurrentWeatherDao
 import com.example.myweatherapp.data.database.DailyWeatherDao
 import com.example.myweatherapp.data.database.HourlyWeatherDao
@@ -52,7 +52,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
         appid: String,
         units: String,
         lang: String
-    ): MyState {
+    ): ResultOfResponse {
 
         return try {
             val weatherDto = openWeatherAPi.getWeather(lat, lon, exclude, appid, units, lang)
@@ -72,7 +72,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
             hourlyWeatherDao.insertHourlyWeather(hourlyWeather)
 
             Log.d("SERVER_RESPONSE", "Success ${weatherDto.currentDto.dt}")
-            Success(
+            ResponseSuccess(
                 mapper.mapCurrentDbModelToCurrentEntity(
                     currentWeather
                 ),
@@ -85,7 +85,7 @@ class WeatherForecastRepositoryImpl @Inject constructor(
             )
 
         } catch (e: Exception) {
-            Error(e.localizedMessage ?: "Unknown exception")
+            ResponseError(e.localizedMessage ?: "Unknown exception")
         }
     }
 

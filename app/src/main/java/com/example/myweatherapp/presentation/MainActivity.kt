@@ -67,20 +67,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getCurrentLocation() {
-        var lat: Double
-        var lon: Double
-        val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val executor = if (VERSION.SDK_INT >= 30) {
-            mainExecutor
-        } else {
-            HandlerExecutor(mainLooper)
-        }
-        val isLocationEnabled = if (VERSION.SDK_INT >= 28) {
-            locationManager.isLocationEnabled
-        } else {
-            LocationManagerCompat.isLocationEnabled(locationManager)
-        }
-
         return if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -94,6 +80,17 @@ class MainActivity : AppCompatActivity() {
                 .show()
             requestLocationPermission()
         } else {
+            val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val executor = if (VERSION.SDK_INT >= 30) {
+                mainExecutor
+            } else {
+                HandlerExecutor(mainLooper)
+            }
+            val isLocationEnabled = if (VERSION.SDK_INT >= 28) {
+                locationManager.isLocationEnabled
+            } else {
+                LocationManagerCompat.isLocationEnabled(locationManager)
+            }
             locationPermissionsIsGranted = true
             val context = applicationContext
             val connectivityManager =
@@ -123,9 +120,7 @@ class MainActivity : AppCompatActivity() {
                 // если геолокация отключена, то любой запрос на локацию вернёт null
                 // как вариант можно брать координаты из БД (например "домашний город")
                 val location = locationManager.getLastKnownLocation(bestLocationProvider)
-                lat = location?.latitude ?: 0.0
-                lon = location?.longitude ?: 0.0
-                navigate(LatLng(lat, lon))
+                navigate(LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0))
             } else {
                 if (VERSION.SDK_INT >= 30) {
                     locationManager.getCurrentLocation(
@@ -134,9 +129,7 @@ class MainActivity : AppCompatActivity() {
                         executor
                     )
                     {
-                        lat = it.latitude
-                        lon = it.longitude
-                        navigate(LatLng(lat, lon))
+                        navigate(LatLng(it.latitude, it.longitude))
                     }
                     return
                 } else {
@@ -147,9 +140,7 @@ class MainActivity : AppCompatActivity() {
                         executor
                     )
                     {
-                        lat = it.latitude
-                        lon = it.longitude
-                        navigate(LatLng(lat, lon))
+                        navigate(LatLng(it.latitude, it.longitude))
                     }
                     return
                 }
