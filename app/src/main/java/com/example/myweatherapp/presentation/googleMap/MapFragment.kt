@@ -2,6 +2,7 @@ package com.example.myweatherapp.presentation.googleMap
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.myweatherapp.databinding.FragmentMapBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.CancelableCallback
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -75,17 +77,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         //  startMarker?.tag = 0
-        lifecycleScope.launch {
             mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
                 googleMap.clear()
                 val location = LatLng(it.lat, it.lon)
                 val startMarker = googleMap.addMarker(MarkerOptions().position(location)) as Marker
-//              googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 7f)) //без анимации
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 7f))
                 startMarker.title = it.temp
                 startMarker.snippet = it.description
-                startMarker.showInfoWindow()
-            }
+//              googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 7f)) //без анимации
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 7f),
+                    object : CancelableCallback {
+                        override fun onFinish() {
+                            startMarker.showInfoWindow()
+                        }
+                        override fun onCancel() {
+                            Log.d("SEARCH_LOCATION_NAME", googleMap.cameraPosition.target.toString())
+                            if(startMarker.isDraggable)  startMarker.showInfoWindow()
+                        }
+                    })
         }
 
         googleMap.setOnMapLongClickListener {
