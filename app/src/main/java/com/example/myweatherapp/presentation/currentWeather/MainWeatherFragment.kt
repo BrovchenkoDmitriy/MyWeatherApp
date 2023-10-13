@@ -22,9 +22,6 @@ import com.example.myweatherapp.BuildConfig
 import com.example.myweatherapp.R
 import com.example.myweatherapp.WeatherApp
 import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
-import com.example.myweatherapp.presentation.Error
-import com.example.myweatherapp.presentation.Loading
-import com.example.myweatherapp.presentation.Success
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
@@ -64,7 +61,7 @@ class MainWeatherFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
+        Log.d("SEARCH_CITIES", "onCreate $this")
         if (arguments != null) {
             if (savedInstanceState == null) {
                 val lat1 = requireArguments().getString("Lat", "0.0")
@@ -89,18 +86,20 @@ class MainWeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.state.observe(viewLifecycleOwner) {
-            when (it) {
+        viewModel.state.observe(viewLifecycleOwner) { currentWeatherState ->
+            when (currentWeatherState) {
                 is Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
 
                 is Error -> {
-                    Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), currentWeatherState.error, Toast.LENGTH_SHORT).show()
+                    viewModel.getLastKnowWeather()
                     initData()
                 }
 
                 is Success -> {
+                    viewModel.getWeather()
                     initData()
                 }
             }
@@ -133,7 +132,6 @@ class MainWeatherFragment : Fragment() {
     }
 
     private fun initData() {
-        viewModel.getWeather()
         Log.d("TAG", "startInitData")
         viewModel.currentWeatherEntity.observe(viewLifecycleOwner) {
             val format = SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault())
