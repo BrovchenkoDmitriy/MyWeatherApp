@@ -8,11 +8,13 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build.VERSION
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -57,12 +59,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigate(latLng: LatLng) {
-        val arg = Bundle().apply {
-            putString("Lat", latLng.latitude.toString())
-            putString("Lon", latLng.longitude.toString())
-        }
-        navController.navigate(R.id.navigation_current_weather, arg)
+    private fun startFirstDestination(latLng: LatLng) {
+        //now need that start destination will receive arguments
+        val navInflater = navController.navInflater
+        val graph = navInflater.inflate(R.navigation.mobile_navigation)
+        val latitude = NavArgument.Builder().setDefaultValue(latLng.latitude.toString()).build()
+        val longitude = NavArgument.Builder().setDefaultValue(latLng.longitude.toString()).build()
+        graph.addArgument("Lat", latitude)
+        graph.addArgument("Lon", longitude)
+        navController.graph = graph
+        binding.startLogoImage.visibility = View.GONE
     }
 
 
@@ -120,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                 // если геолокация отключена, то любой запрос на локацию вернёт null
                 // как вариант можно брать координаты из БД (например "домашний город")
                 val location = locationManager.getLastKnownLocation(bestLocationProvider)
-                navigate(LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0))
+                startFirstDestination(LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0))
             } else {
                 if (VERSION.SDK_INT >= 30) {
                     locationManager.getCurrentLocation(
@@ -129,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                         executor
                     )
                     {
-                        navigate(LatLng(it.latitude, it.longitude))
+                        startFirstDestination(LatLng(it.latitude, it.longitude))
                     }
                     return
                 } else {
@@ -140,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                         executor
                     )
                     {
-                        navigate(LatLng(it.latitude, it.longitude))
+                        startFirstDestination(LatLng(it.latitude, it.longitude))
                     }
                     return
                 }

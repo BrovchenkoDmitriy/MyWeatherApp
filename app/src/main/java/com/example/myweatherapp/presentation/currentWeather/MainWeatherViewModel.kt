@@ -4,16 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myweatherapp.domain.ResponseError
-import com.example.myweatherapp.domain.ResponseSuccess
 import com.example.myweatherapp.domain.CurrentWeatherEntity
 import com.example.myweatherapp.domain.GeHourlyWeatherUseCase
 import com.example.myweatherapp.domain.GetCurrentWeatherUseCase
 import com.example.myweatherapp.domain.GetSearchedCitiesUseCase
 import com.example.myweatherapp.domain.HourlyWeatherEntity
 import com.example.myweatherapp.domain.LoadDataUseCase
+import com.example.myweatherapp.domain.ResponseError
+import com.example.myweatherapp.domain.ResponseSuccess
 import com.example.myweatherapp.domain.SearchedCities
-import com.example.myweatherapp.presentation.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,8 +34,8 @@ class MainWeatherViewModel @Inject constructor(
     private val _searchedCities = MutableLiveData<List<SearchedCities>>()
     val searchedCities: LiveData<List<SearchedCities>> = _searchedCities
 
-    private val _state = MutableLiveData<MyState>()
-    val state: LiveData<MyState> = _state
+    private val _state = MutableLiveData<CurrentWeatherState>()
+    val state: LiveData<CurrentWeatherState> = _state
 
     fun getNewWeather(
         lat: Double,
@@ -51,7 +50,6 @@ class MainWeatherViewModel @Inject constructor(
             when (val result = loadDataUseCase(lat, lon, exclude, appid, units, lang)) {
                 is ResponseSuccess -> _state.value = Success(
                     result.currentWeatherEntity,
-                    result.dailyWeatherEntity,
                     result.hourlyWeatherEntity
                 )
 
@@ -64,7 +62,16 @@ class MainWeatherViewModel @Inject constructor(
         viewModelScope.launch {
             _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
             _hourlyWeatherEntity.value = getHourlyWeatherUseCase.invoke()
+        }
+    }
 
+    fun getLastKnowWeather() {
+        viewModelScope.launch {
+            val currentWeather = getCurrentWeatherUseCase.invoke()
+            val hourlyWeather = getHourlyWeatherUseCase.invoke()
+            _currentWeatherEntity.value = currentWeather
+            _hourlyWeatherEntity.value = hourlyWeather
+            _state.value = Success(currentWeather, hourlyWeather)
         }
     }
 
