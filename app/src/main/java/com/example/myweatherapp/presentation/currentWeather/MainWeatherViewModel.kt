@@ -48,11 +48,7 @@ class MainWeatherViewModel @Inject constructor(
         _state.value = Loading
         viewModelScope.launch {
             when (val result = loadDataUseCase(lat, lon, exclude, appid, units, lang)) {
-                is ResponseSuccess -> _state.value = Success(
-                    result.currentWeatherEntity,
-                    result.hourlyWeatherEntity
-                )
-
+                is ResponseSuccess -> _state.value = Success
                 is ResponseError -> _state.value = Error(result.error)
             }
         }
@@ -65,14 +61,8 @@ class MainWeatherViewModel @Inject constructor(
         }
     }
 
-    fun getLastKnowWeather() {
-        viewModelScope.launch {
-            val currentWeather = getCurrentWeatherUseCase.invoke()
-            val hourlyWeather = getHourlyWeatherUseCase.invoke()
-            _currentWeatherEntity.value = currentWeather
-            _hourlyWeatherEntity.value = hourlyWeather
-            _state.value = Success(currentWeather, hourlyWeather)
-        }
+    fun changeStateStatus() {
+        _state.value = Success
     }
 
     fun searchCities(

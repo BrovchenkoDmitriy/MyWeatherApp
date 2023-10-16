@@ -94,8 +94,7 @@ class MainWeatherFragment : Fragment() {
 
                 is Error -> {
                     Toast.makeText(requireContext(), currentWeatherState.error, Toast.LENGTH_SHORT).show()
-                    viewModel.getLastKnowWeather()
-                    initData()
+                    viewModel.changeStateStatus()
                 }
 
                 is Success -> {

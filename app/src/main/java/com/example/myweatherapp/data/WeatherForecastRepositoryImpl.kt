@@ -95,10 +95,10 @@ class WeatherForecastRepositoryImpl @Inject constructor(
     }
 
     enum class DetailOfResponse(val value: String) {
-        COUNTRY("3"),
-        STATE("5"),
-        COUNTY("8"),
-        CITY("10"),
-        TOWN("18"),
+//        COUNTRY("3"),
+//        STATE("5"),
+//        COUNTY("8"),
+//        CITY("10"),
+        TOWN("18")
     }
 }
