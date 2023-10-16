@@ -8,4 +8,3 @@ class Success(
 ) : WeekForecastState()
 
 object Loading : WeekForecastState()
-class Error(val error: String) : WeekForecastState()

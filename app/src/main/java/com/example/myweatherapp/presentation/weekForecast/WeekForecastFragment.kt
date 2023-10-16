@@ -8,15 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.myweatherapp.WeatherApp
 import com.example.myweatherapp.databinding.FragmentWeekForecastBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.weekForecast.weekForecastRecyclerView.WeatherWeekAdapter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 
 
 class WeekForecastFragment : Fragment() {
@@ -62,18 +58,21 @@ class WeekForecastFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.clearLiveData()
         viewModel.updateData()
         setupRecyclerView()
+        viewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
+                is Loading -> {
+                    binding.pbLoadWeekWeather.visibility = View.VISIBLE
+                    binding.rvFurtherWeek.visibility = View.GONE
+                }
 
-        lifecycleScope.launch {
-            delay(Random.nextLong(500, 1000))
-            binding.pbLoadWeekWeather.visibility = View.GONE
-            binding.rvFurtherWeek.visibility = View.VISIBLE
-        }
-
-        viewModel.weekWeather.observe(viewLifecycleOwner) {
-            weatherAdapter.submitList(it)
+                is Success -> {
+                    weatherAdapter.submitList(it.dailyWeatherEntity)
+                    binding.pbLoadWeekWeather.visibility = View.GONE
+                    binding.rvFurtherWeek.visibility = View.VISIBLE
+                }
+            }
         }
     }
 
