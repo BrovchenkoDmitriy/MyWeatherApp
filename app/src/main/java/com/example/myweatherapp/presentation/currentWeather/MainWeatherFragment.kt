@@ -100,6 +100,7 @@ class MainWeatherFragment : Fragment() {
                 is Success -> {
                     viewModel.getWeather()
                     initData()
+                    crossFadeAnimation()
                 }
             }
         }
@@ -160,7 +161,6 @@ class MainWeatherFragment : Fragment() {
                 else View.GONE
             }
         }
-        crossFadeAnimation()
     }
 
     private fun crossFadeAnimation() {
