@@ -28,8 +28,8 @@ class HourlyWeatherAdapter :
         imgUrl?.let {
             val imgUri = imgUrl.toUri().buildUpon().scheme("https").build()
             imgView.load(imgUri) {
-                placeholder(R.drawable.ic_launcher_background)
-                error(R.drawable.ic_launcher_foreground)
+                placeholder(R.drawable.loading_animation)
+                error(R.drawable.ic_broken_image)
             }
         }
     }

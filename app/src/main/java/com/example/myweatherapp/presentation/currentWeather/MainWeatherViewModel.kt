@@ -13,6 +13,12 @@ import com.example.myweatherapp.domain.LoadDataUseCase
 import com.example.myweatherapp.domain.ResponseError
 import com.example.myweatherapp.domain.ResponseSuccess
 import com.example.myweatherapp.domain.SearchedCities
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,6 +42,12 @@ class MainWeatherViewModel @Inject constructor(
 
     private val _state = MutableLiveData<CurrentWeatherState>()
     val state: LiveData<CurrentWeatherState> = _state
+
+    val searchCityState: MutableSharedFlow<String> = MutableSharedFlow()
+
+    init {
+        subscribeToSearchQueryChanges()
+    }
 
     fun getNewWeather(
         lat: Double,
@@ -65,12 +77,20 @@ class MainWeatherViewModel @Inject constructor(
         _state.value = Success
     }
 
-    fun searchCities(
+    private fun searchCities(
         query: String,
     ) {
         viewModelScope.launch {
             val result = getSearchedCitiesUseCase.invoke(query)
             _searchedCities.value = result
         }
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    private fun subscribeToSearchQueryChanges() {
+        searchCityState
+            .debounce(1000L)
+            .mapLatest { query -> searchCities(query) }
+            .launchIn(viewModelScope)
     }
 }
