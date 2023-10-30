@@ -25,7 +25,6 @@ import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
-import kotlinx.coroutines.delay
 import java.util.Locale
 import javax.inject.Inject
 
@@ -109,8 +108,7 @@ class MainWeatherFragment : Fragment() {
         binding.etSearchCity.addTextChangedListener {
             it?.let {
                 lifecycleScope.launchWhenResumed {
-                    delay(1000)
-                    searchCities(it.toString())
+                    viewModel.searchCityState.emit(it.toString())
                 }
             }
         }
@@ -125,10 +123,6 @@ class MainWeatherFragment : Fragment() {
             WeatherApp.UNITS,
             WeatherApp.LANG
         )
-    }
-
-    private fun searchCities(query: String) {
-        viewModel.searchCities(query)
     }
 
     private fun initData() {
@@ -199,8 +193,8 @@ class MainWeatherFragment : Fragment() {
         imgUrl.let {
             val imgUri = imgUrl.toUri().buildUpon().scheme("https").build()
             imgView.load(imgUri) {
-                placeholder(R.drawable.ic_launcher_background)
-                error(R.drawable.ic_launcher_foreground)
+                placeholder(R.drawable.loading_animation)
+                error(R.drawable.ic_broken_image)
             }
         }
     }
@@ -214,7 +208,6 @@ class MainWeatherFragment : Fragment() {
             searchedCitiesAdapter.onItemClickListener = {
                 binding.etSearchCity.text.clear()
                 binding.etSearchCity.clearFocus()
-                searchCities("")
                 getNewWeather(it.geoLat, it.geoLon)
                 // remove softKeyBoard after chose city
                 (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
