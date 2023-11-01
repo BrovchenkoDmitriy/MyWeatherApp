@@ -56,6 +56,9 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         if (savedInstanceState == null) {
             getCurrentLocation()
+        } else {
+            binding.startLogoImage.visibility = View.GONE
+            navController.graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         }
     }
 

@@ -6,9 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.myweatherapp.BuildConfig
 import com.example.myweatherapp.R
 import com.example.myweatherapp.WeatherApp
@@ -22,8 +22,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -77,23 +75,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         //  startMarker?.tag = 0
-            mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
-                googleMap.clear()
-                val location = LatLng(it.lat, it.lon)
-                val startMarker = googleMap.addMarker(MarkerOptions().position(location)) as Marker
-                startMarker.title = it.temp
-                startMarker.snippet = it.description
+        mapViewModel.currentWeatherDto.observe(viewLifecycleOwner) {
+            googleMap.clear()
+            val location = LatLng(it.lat, it.lon)
+            val startMarker = googleMap.addMarker(MarkerOptions().position(location)) as Marker
+            startMarker.title = it.temp
+            startMarker.snippet = it.description
 //              googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 7f)) //без анимации
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 7f),
-                    object : CancelableCallback {
-                        override fun onFinish() {
-                            startMarker.showInfoWindow()
-                        }
-                        override fun onCancel() {
-                            Log.d("SEARCH_LOCATION_NAME", googleMap.cameraPosition.target.toString())
-                            if(startMarker.isDraggable)  startMarker.showInfoWindow()
-                        }
-                    })
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 7f),
+                object : CancelableCallback {
+                    override fun onFinish() {
+                        startMarker.showInfoWindow()
+                    }
+
+                    override fun onCancel() {
+                        Log.d("SEARCH_LOCATION_NAME", googleMap.cameraPosition.target.toString())
+                        if (startMarker.isDraggable) startMarker.showInfoWindow()
+                    }
+                })
         }
 
         googleMap.setOnMapLongClickListener {
@@ -103,36 +102,32 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         googleMap.setOnMarkerClickListener {
-           // googleMap.clear()
+            // googleMap.clear()
             onMarkerClick(it)
         }
     }
 
     private fun onMarkerClick(marker: Marker): Boolean {
-
-        val jobLoad = lifecycleScope.launch {
-            val firstData = mapViewModel.getCurrentWeather()
-            loadData(marker.position.latitude, marker.position.longitude)
-            marker.title = "Загрузка данных"
-            marker.snippet = "пожалуйста подождите"
-            marker.showInfoWindow()
-
-            //delay while loading new data
-            delay(1000)
-            var secondData = mapViewModel.getCurrentWeather()
-            while (firstData == secondData) {
-                secondData = mapViewModel.getCurrentWeather()
-                delay(500)
-            }
-        }
-
-        lifecycleScope.launch {
-            jobLoad.join()
+        loadData(marker.position.latitude, marker.position.longitude)
+        mapViewModel.state.observe(viewLifecycleOwner) {
             marker.hideInfoWindow()
-            val it = mapViewModel.getCurrentWeather()
-            marker.title = it.temp
-            marker.snippet = it.description
-            marker.showInfoWindow()
+            when (it) {
+                is Loading -> {
+                    marker.title = "Загрузка данных"
+                    marker.snippet = "пожалуйста подождите"
+                    marker.showInfoWindow()
+                }
+
+                is Success -> {
+                    marker.title = it.currentWeatherEntity.temp
+                    marker.snippet = it.currentWeatherEntity.description
+                    marker.showInfoWindow()
+                }
+
+                is Error -> {
+                    Toast.makeText(requireContext(), it.error, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
         return true // if true - cancel standard actions and complete code of onMarkerClick()
     }
