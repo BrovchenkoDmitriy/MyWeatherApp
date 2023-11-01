@@ -9,7 +9,6 @@ import com.example.myweatherapp.domain.GetCurrentWeatherUseCase
 import com.example.myweatherapp.domain.LoadDataUseCase
 import com.example.myweatherapp.domain.ResponseError
 import com.example.myweatherapp.domain.ResponseSuccess
-import com.example.myweatherapp.presentation.currentWeather.CurrentWeatherState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,10 +23,6 @@ class MapViewModel @Inject constructor(
 
     private val _state = MutableLiveData<GoogleMapState>()
     val state: LiveData<GoogleMapState> = _state
-
-    fun getCurrentWeather(): CurrentWeatherEntity {
-        return currentWeatherDto.value ?: throw RuntimeException("Data not exist")
-    }
 
     fun uploadCurrentWeather() {
         viewModelScope.launch {
@@ -46,8 +41,13 @@ class MapViewModel @Inject constructor(
         _state.value = Loading
         viewModelScope.launch {
             when (val result = loadDataUseCase.invoke(lat, lon, exclude, appid, units, lang)) {
-                is ResponseSuccess -> _state.value = Success(result.currentWeatherEntity)
-                is ResponseError -> _state.value = Error(result.error)
+                is ResponseSuccess -> {
+                    _state.value = Success(result.currentWeatherEntity)
+                }
+
+                is ResponseError -> {
+                    _state.value = Error(result.error)
+                }
             }
             _currentWeatherEntity.value = getCurrentWeatherUseCase.invoke()
         }
