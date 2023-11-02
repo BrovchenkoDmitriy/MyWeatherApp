@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -13,9 +14,6 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
-
-        buildConfigField ("String", "OPEN_WEATHER_API_KEY", OPEN_WEATHER_API_KEY)
-        buildConfigField ("String", "DADATA_API_KEY", DADATA_API_KEY)
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
