@@ -18,7 +18,7 @@
         android:theme="@style/Theme.App.Starting">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAcgxCaZtTWNEN4_4m_SENmQHysHFf_GpE" />
+            android:value="${GOOGLE_MAP_KEY}" />
         <activity
             android:name="com.example.myweatherapp.presentation.MainActivity"
             android:exported="true"
