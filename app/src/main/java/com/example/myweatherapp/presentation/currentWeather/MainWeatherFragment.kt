@@ -25,6 +25,7 @@ import com.example.myweatherapp.databinding.FragmentMainWeatherBinding
 import com.example.myweatherapp.presentation.ViewModelFactory
 import com.example.myweatherapp.presentation.currentWeather.hourlyForecastRecyclerView.HourlyWeatherAdapter
 import com.example.myweatherapp.presentation.currentWeather.searchCitiesAutocompleteRecyclerView.SearchedCitiesAdapter
+import com.google.android.gms.maps.model.LatLng
 import java.util.Locale
 import javax.inject.Inject
 
@@ -208,7 +209,14 @@ class MainWeatherFragment : Fragment() {
             searchedCitiesAdapter.onItemClickListener = {
                 binding.etSearchCity.text.clear()
                 binding.etSearchCity.clearFocus()
-                getNewWeather(it.geoLat, it.geoLon)
+                when(it.postalCode){ //API по этим городам не предоставляет координаты
+                    "299700" -> getNewWeather(SEVASTOPOL.latitude, SEVASTOPOL.longitude)
+                    "101000" -> getNewWeather(MOSCOW.latitude, MOSCOW.longitude)
+                    "190000" -> getNewWeather(S_PETERSBURG.latitude, S_PETERSBURG.longitude)
+                    "468320" -> getNewWeather(BAIKONUR.latitude, BAIKONUR.longitude)
+                    else ->  getNewWeather(it.geoLat, it.geoLon)
+
+                }
                 // remove softKeyBoard after chose city
                 (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                     .hideSoftInputFromWindow(windowToken, 0)
@@ -222,5 +230,10 @@ class MainWeatherFragment : Fragment() {
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rvHourlyWeather)
     }
-
+    companion object{
+        private val MOSCOW = LatLng(55.7543,37.6166)
+        private val S_PETERSBURG = LatLng(59.9310,30.3609)
+        private val SEVASTOPOL = LatLng(44.608,33.5213)
+        private val BAIKONUR = LatLng(45.6322,63.3209)
+    }
 }
